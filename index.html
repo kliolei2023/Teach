@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 空中寫字教學系統 - Firebase 穩定版</title>
+    <title>AI 空中寫字教學系統 - 30人班級流暢版</title>
     <style>
         body { margin: 0; padding: 0; background: #121212; color: white; font-family: "Microsoft JhengHei", Arial, sans-serif; overflow: hidden; }
         .page { display: none; width: 100vw; height: 100vh; position: absolute; flex-direction: column; align-items: center; justify-content: center; }
@@ -331,10 +331,14 @@
             for(let i=1; i<p.length-1; i++) octx.quadraticCurveTo(p[i].x, p[i].y, (p[i].x+p[i+1].x)/2, (p[i].y+p[i+1].y)/2);
             octx.stroke();
         });
-        let img = off.toDataURL("image/png");
+
+        // 🔹 核心優化：將圖片改為 jpeg 格式，並設定品質為 0.15 (極低體積)
+        let img = off.toDataURL("image/jpeg", 0.15); 
+        
         const sD = octx.getImageData(0,0,off.width,off.height).data;
         let m=0, t=0; for (let i=3; i<tD.length; i+=16) { if(tD[i]>0){ t++; if(sD[i]>0) m++; } }
         
+        // 🔹 回歸平衡評分邏輯
         let coverage = (m/t)*100;
         let finalScore = 0;
         if (coverage > 65) { finalScore = 90 + (coverage - 65) / 3.5; }
