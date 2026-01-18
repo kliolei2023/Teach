@@ -1,680 +1,389 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>手勢書寫 - iPad版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 空中寫字教學系統 - Firebase 穩定版</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .app-container {
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-            overflow: hidden;
-        }
-
-        .header {
-            text-align: center;
-            padding: 15px 0;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        .status-bar {
-            display: flex;
-            justify-content: space-around;
-            margin: 15px 0;
-            flex-shrink: 0;
-        }
-
-        .status-item {
-            text-align: center;
-            min-width: 80px;
-        }
-
-        .status-label {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-bottom: 3px;
-        }
-
-        .status-value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #4fc3f7;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 5px 10px;
-            border-radius: 10px;
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            overflow: hidden;
-        }
-
-        .target-section {
-            flex: 0 0 45%;
-            min-height: 0;
-        }
-
-        .target-container {
-            position: relative;
-            height: 100%;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        #targetWord {
-            position: absolute;
-            font-size: 30vh;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        #drawingCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            touch-action: none;
-        }
-
-        .camera-section {
-            flex: 0 0 45%;
-            min-height: 0;
-            position: relative;
-        }
-
-        .camera-container {
-            position: relative;
-            height: 100%;
-            width: 100%;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            background: #000;
-        }
-
-        #cameraVideo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transform: scaleX(-1);
-            background: #000;
-        }
-
-        .gesture-indicator {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            z-index: 3;
-        }
-
-        .gesture-active {
-            background: rgba(76, 175, 80, 0.9);
-        }
-
-        .controls {
-            flex-shrink: 0;
-            padding: 10px 0;
-        }
-
-        .controls-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .control-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 12px;
-            padding: 15px 5px;
-            color: white;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .control-btn:active {
-            transform: scale(0.95);
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-icon {
-            font-size: 1.5rem;
-        }
-
-        #startBtn {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-        }
-
-        #clearBtn {
-            background: linear-gradient(135deg, #FF9800, #EF6C00);
-        }
-
-        #nextBtn {
-            background: linear-gradient(135deg, #2196F3, #0D47A1);
-        }
-
-        .instructions {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 10px;
-            margin-top: 10px;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-
-        .instructions strong {
-            color: #4fc3f7;
-        }
-
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            color: white;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #4CAF50;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* 橫向模式調整 */
-        @media (orientation: landscape) {
-            .main-content {
-                flex-direction: row;
-            }
-            .target-section, .camera-section {
-                flex: 1;
-            }
-            #targetWord {
-                font-size: 25vh;
-            }
-        }
+        body { margin: 0; padding: 0; background: #121212; color: white; font-family: "Microsoft JhengHei", Arial, sans-serif; overflow: hidden; }
+        .page { display: none; width: 100vw; height: 100vh; position: absolute; flex-direction: column; align-items: center; justify-content: center; }
+        .active { display: flex; }
+        .card { background: rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 20px; backdrop-filter: blur(10px); width: 350px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: none; background: #00FF00; color: black; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        button:hover { transform: scale(1.02); }
+        button:disabled { background: #555; cursor: not-allowed; transform: none; }
+        #page_teacher_dash { overflow-y: auto; justify-content: flex-start; padding: 20px 0; }
+        .dash-container { width: 95%; max-width: 1000px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .monitor-panel { background: rgba(255, 255, 255, 0.08); padding: 18px; border-radius: 15px; flex: 1; min-width: 320px; border: 1px solid rgba(255,255,255,0.1); }
+        .room-manager { width: 95%; max-width: 1000px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .room-chip { background: #333; padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 8px; border: 1px solid #555; cursor: pointer; font-size: 14px; }
+        .room-chip.active { border-color: #00FF00; background: rgba(0,255,0,0.1); color: #00FF00; }
+        .room-chip .del-x { color: #ff4d4d; font-weight: bold; cursor: pointer; padding: 2px 5px; }
+        #page_writing { background: #000; }
+        #input_video { visibility: hidden; position: absolute; }
+        #overlay_canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .writing-ui { position: absolute; top: 20px; left: 20px; pointer-events: none; }
+        .writing-info { background: rgba(0,0,0,0.8); padding: 15px; border-radius: 12px; border: 2px solid #00FF00; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; background: rgba(0,0,0,0.4); }
+        th, td { border: 1px solid rgba(255,255,255,0.1); padding: 10px; text-align: center; }
+        th { background: #222; color: #00FF00; }
+        .work-thumb { width: 40px; height: 30px; border: 1px solid #00FF00; cursor: pointer; object-fit: cover; background: #000; border-radius: 4px; transform: scaleX(-1); }
+        #artwork_modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
+        #big_art { max-width: 90%; max-height: 80%; border: 2px solid white; border-radius: 10px; transform: scaleX(-1); }
+        #artwork_modal .close-art { position: absolute; top: 30px; right: 40px; color: white; font-size: 40px; cursor: pointer; font-weight: bold; }
+        #result_modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 30px; text-align: center; z-index: 2000; min-width: 320px; color: black; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        #res_score { font-size: 80px; font-weight: bold; color: #2c3e50; }
     </style>
 </head>
 <body>
-    <div class="loader" id="loader">
-        <div class="spinner"></div>
-        <h3>準備中...</h3>
-        <p id="loaderText">請稍候</p>
-    </div>
 
-    <div class="app-container">
-        <div class="header">
-            <h1>✍️ 手勢書寫測試</h1>
-            <p class="subtitle">簡單的手勢偵測版本</p>
-        </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, query, where, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        <div class="status-bar">
-            <div class="status-item">
-                <div class="status-label">當前字母</div>
-                <div class="status-value" id="currentLetter">A</div>
-            </div>
-            <div class="status-item">
-                <div class="status-label">書寫狀態</div>
-                <div class="status-value" id="drawingStatus">等待</div>
-            </div>
-            <div class="status-item">
-                <div class="status-label">模式</div>
-                <div class="status-value" id="modeStatus">觸控</div>
-            </div>
-        </div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDk5l70PQPSb0pIl6q-eyXU1IBF093F9FQ",
+            authDomain: "writing-3646d.firebaseapp.com",
+            databaseURL: "https://writing-3646d-default-rtdb.firebaseio.com",
+            projectId: "writing-3646d",
+            storageBucket: "writing-3646d.firebasestorage.app",
+            messagingSenderId: "268020200454",
+            appId: "1:268020200454:web:d0b12c77a91efeecf33f87",
+            measurementId: "G-HSSVJEQC95"
+        };
 
-        <div class="main-content">
-            <div class="target-section">
-                <div class="target-container">
-                    <div id="targetWord">A</div>
-                    <canvas id="drawingCanvas"></canvas>
-                </div>
-            </div>
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        window.firebaseDB = { db, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, query, where, deleteDoc, getDocs };
 
-            <div class="camera-section">
-                <div class="camera-container">
-                    <video id="cameraVideo" autoplay playsinline></video>
-                    <div class="gesture-indicator" id="gestureIndicator">
-                        👆 準備中
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="controls">
-            <div class="controls-grid">
-                <button class="control-btn" id="startBtn">
-                    <span class="btn-icon">📷</span>
-                    <span>開啟鏡頭</span>
-                </button>
-                <button class="control-btn" id="clearBtn">
-                    <span class="btn-icon">🧹</span>
-                    <span>清除筆跡</span>
-                </button>
-                <button class="control-btn" id="nextBtn">
-                    <span class="btn-icon">⭐</span>
-                    <span>評分</span>
-                </button>
-            </div>
-            
-            <div class="instructions">
-                <strong>使用說明：</strong> 
-                1. 點「開啟鏡頭」 2. 允許相機權限 3. 用手在鏡頭前移動 4. 用手指觸控畫面書寫
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // 獲取DOM元素
-        const loader = document.getElementById('loader');
-        const loaderText = document.getElementById('loaderText');
-        const targetWord = document.getElementById('targetWord');
-        const drawingCanvas = document.getElementById('drawingCanvas');
-        const drawingCtx = drawingCanvas.getContext('2d');
-        const cameraVideo = document.getElementById('cameraVideo');
-        const startBtn = document.getElementById('startBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const drawingStatus = document.getElementById('drawingStatus');
-        const modeStatus = document.getElementById('modeStatus');
-        const gestureIndicator = document.getElementById('gestureIndicator');
-        
-        // 狀態變數
-        let isDrawing = false;
-        let isCameraOn = false;
-        let currentScore = 0;
-        const words = ['A', 'B', 'C', 'D', 'E'];
-        let currentWordIndex = 0;
-        
-        // 繪製設定
-        drawingCtx.lineWidth = 8;
-        drawingCtx.lineCap = 'round';
-        drawingCtx.lineJoin = 'round';
-        drawingCtx.strokeStyle = '#FF5722';
-        
-        // 初始化
-        function init() {
-            console.log('系統初始化...');
-            
-            // 調整畫布大小
-            resizeCanvas();
-            
-            // 設定事件監聽
-            setupEventListeners();
-            
-            // 更新初始狀態
-            updateStatus('等待開始');
-            modeStatus.textContent = '觸控';
-            
-            // 隱藏加載畫面
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 1000);
-            
-            console.log('初始化完成');
+        async function loginAsTeacher() {
+            const accountInput = document.getElementById('teacherAccount').value;
+            const passwordInput = document.getElementById('teacherPassword').value;
+            if (!accountInput || !passwordInput) { alert("請輸入帳號和密碼"); return; }
+            try {
+                const docRef = doc(db, "admins", accountInput);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const adminData = docSnap.data();
+                    if (adminData.password === passwordInput) {
+                        alert("登入成功！");
+                        showPage('page_teacher_dash');
+                    } else { alert("密碼錯誤！"); }
+                } else { alert("找不到帳號！"); }
+            } catch (e) { alert("系統錯誤"); }
         }
-        
-        // 調整畫布大小
-        function resizeCanvas() {
-            const container = drawingCanvas.parentElement;
-            drawingCanvas.width = container.clientWidth;
-            drawingCanvas.height = container.clientHeight;
-        }
-        
-        // 設定事件監聽
-        function setupEventListeners() {
-            // 視窗大小變化
-            window.addEventListener('resize', resizeCanvas);
-            window.addEventListener('orientationchange', () => {
-                setTimeout(resizeCanvas, 300);
-            });
-            
-            // 按鈕事件
-            startBtn.addEventListener('click', toggleCamera);
-            clearBtn.addEventListener('click', clearDrawing);
-            nextBtn.addEventListener('click', evaluateAndNext);
-            
-            // 觸控事件 - 用於書寫
-            drawingCanvas.addEventListener('touchstart', startTouchDrawing);
-            drawingCanvas.addEventListener('touchmove', continueTouchDrawing);
-            drawingCanvas.addEventListener('touchend', endTouchDrawing);
-            
-            // 滑鼠事件（在電腦上測試用）
-            drawingCanvas.addEventListener('mousedown', startMouseDrawing);
-            drawingCanvas.addEventListener('mousemove', continueMouseDrawing);
-            drawingCanvas.addEventListener('mouseup', endMouseDrawing);
-            drawingCanvas.addEventListener('mouseleave', endMouseDrawing);
-            
-            // 監聽相機流
-            cameraVideo.addEventListener('play', () => {
-                console.log('鏡頭開始運作');
-                isCameraOn = true;
-                gestureIndicator.textContent = '📹 鏡頭開啟';
-                updateStatus('鏡頭開啟中');
-                startSimpleHandDetection();
-            });
-        }
-        
-        // 切換鏡頭
-        async function toggleCamera() {
-            if (isCameraOn) {
-                // 關閉鏡頭
-                const stream = cameraVideo.srcObject;
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                }
-                cameraVideo.srcObject = null;
-                isCameraOn = false;
-                startBtn.innerHTML = '<span class="btn-icon">📷</span><span>開啟鏡頭</span>';
-                gestureIndicator.textContent = '📷 鏡頭關閉';
-                updateStatus('鏡頭已關閉');
-            } else {
-                // 開啟鏡頭
-                try {
-                    loader.style.display = 'flex';
-                    loaderText.textContent = '正在請求鏡頭權限...';
-                    
-                    const constraints = {
-                        video: {
-                            facingMode: 'user',
-                            width: { ideal: 640 },
-                            height: { ideal: 480 }
-                        }
-                    };
-                    
-                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                    cameraVideo.srcObject = stream;
-                    startBtn.innerHTML = '<span class="btn-icon">⏹️</span><span>關閉鏡頭</span>';
-                    
-                    loaderText.textContent = '鏡頭已開啟！';
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                    }, 1000);
-                    
-                } catch (error) {
-                    console.error('無法開啟鏡頭:', error);
-                    loader.style.display = 'none';
-                    alert('無法開啟鏡頭：' + error.message + '\n\n請確認：\n1. 已允許相機權限\n2. 沒有其他應用程式使用相機\n3. 在 Safari 中開啟此頁面');
-                    
-                    if (error.name === 'NotAllowedError') {
-                        // iPad Safari 權限提示
-                        alert('請在 Safari 中：\n1. 點擊網址欄的「aA」圖標\n2. 選擇「網站設定」\n3. 將「相機」設為「允許」\n4. 重新整理頁面');
-                    }
-                }
-            }
-        }
-        
-        // 簡化的手勢偵測（基於色彩和移動）
-        function startSimpleHandDetection() {
-            if (!isCameraOn) return;
-            
-            console.log('啟動簡單手勢偵測');
-            
-            // 建立一個隱藏的 canvas 來分析影片幀
-            const tempCanvas = document.createElement('canvas');
-            const tempCtx = tempCanvas.getContext('2d');
-            
-            // 設定與影片相同的尺寸
-            tempCanvas.width = 160;  // 降低解析度以提高性能
-            tempCanvas.height = 120;
-            
-            let lastFrame = null;
-            let motionLevel = 0;
-            
-            function detectMotion() {
-                if (!isCameraOn || cameraVideo.paused || cameraVideo.ended) {
-                    return;
-                }
-                
-                try {
-                    // 繪製當前幀到臨時畫布
-                    tempCtx.drawImage(cameraVideo, 0, 0, tempCanvas.width, tempCanvas.height);
-                    const currentFrame = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-                    
-                    if (lastFrame) {
-                        // 簡單的幀差法偵測移動
-                        let diff = 0;
-                        const data1 = lastFrame.data;
-                        const data2 = currentFrame.data;
-                        
-                        for (let i = 0; i < data1.length; i += 4) {
-                            const r1 = data1[i];
-                            const g1 = data1[i + 1];
-                            const b1 = data1[i + 2];
-                            const r2 = data2[i];
-                            const g2 = data2[i + 1];
-                            const b2 = data2[i + 2];
-                            
-                            const pixelDiff = Math.abs(r1 - r2) + Math.abs(g1 - g2) + Math.abs(b1 - b2);
-                            if (pixelDiff > 30) {
-                                diff++;
-                            }
-                        }
-                        
-                        // 計算移動程度（0-100）
-                        motionLevel = Math.min(100, Math.round((diff / (tempCanvas.width * tempCanvas.height)) * 1000));
-                        
-                        // 更新指示器
-                        if (motionLevel > 20) {
-                            gestureIndicator.textContent = `👋 偵測到移動 (${motionLevel}%)`;
-                            gestureIndicator.classList.add('gesture-active');
-                        } else {
-                            gestureIndicator.textContent = '👆 請移動手部';
-                            gestureIndicator.classList.remove('gesture-active');
-                        }
-                        
-                        // 更新模式狀態
-                        if (motionLevel > 50) {
-                            modeStatus.textContent = '手勢模式';
-                            updateStatus('手勢偵測中');
-                        } else {
-                            modeStatus.textContent = '觸控模式';
-                        }
-                    }
-                    
-                    lastFrame = currentFrame;
-                    
-                    // 繼續偵測
-                    requestAnimationFrame(detectMotion);
-                    
-                } catch (error) {
-                    console.error('偵測錯誤:', error);
-                }
-            }
-            
-            // 開始偵測
-            detectMotion();
-        }
-        
-        // 觸控繪製功能
-        function startTouchDrawing(e) {
-            e.preventDefault();
-            isDrawing = true;
-            
-            const touch = e.touches[0];
-            const rect = drawingCanvas.getBoundingClientRect();
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-            
-            drawingCtx.beginPath();
-            drawingCtx.moveTo(x, y);
-            updateStatus('書寫中...');
-        }
-        
-        function continueTouchDrawing(e) {
-            e.preventDefault();
-            if (!isDrawing) return;
-            
-            const touch = e.touches[0];
-            const rect = drawingCanvas.getBoundingClientRect();
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-            
-            drawingCtx.lineTo(x, y);
-            drawingCtx.stroke();
-        }
-        
-        function endTouchDrawing(e) {
-            e.preventDefault();
-            isDrawing = false;
-            drawingCtx.closePath();
-            updateStatus('完成書寫');
-        }
-        
-        // 滑鼠繪製功能（電腦測試用）
-        function startMouseDrawing(e) {
-            isDrawing = true;
-            
-            const rect = drawingCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            drawingCtx.beginPath();
-            drawingCtx.moveTo(x, y);
-            updateStatus('書寫中...');
-        }
-        
-        function continueMouseDrawing(e) {
-            if (!isDrawing) return;
-            
-            const rect = drawingCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            drawingCtx.lineTo(x, y);
-            drawingCtx.stroke();
-        }
-        
-        function endMouseDrawing() {
-            isDrawing = false;
-            drawingCtx.closePath();
-            updateStatus('完成書寫');
-        }
-        
-        // 清除畫布
-        function clearDrawing() {
-            drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-            updateStatus('畫布已清除');
-            currentScore = 0;
-        }
-        
-        // 評分與切換
-        function evaluateAndNext() {
-            // 簡單評分（檢查繪製面積）
-            const imageData = drawingCtx.getImageData(0, 0, drawingCanvas.width, drawingCanvas.height);
-            const data = imageData.data;
-            
-            let drawnPixels = 0;
-            for (let i = 0; i < data.length; i += 4) {
-                if (data[i + 3] > 10) { // 有繪製的像素
-                    drawnPixels++;
-                }
-            }
-            
-            const totalPixels = drawingCanvas.width * drawingCanvas.height;
-            const coverage = (drawnPixels / totalPixels) * 100;
-            
-            // 計算分數（0-100）
-            currentScore = Math.min(100, Math.round(coverage * 2));
-            
-            // 顯示分數
-            alert(`評分結果：${currentScore}分\n\n繪製覆蓋率：${coverage.toFixed(1)}%`);
-            
-            // 切換到下一個字母
-            currentWordIndex = (currentWordIndex + 1) % words.length;
-            targetWord.textContent = words[currentWordIndex];
-            document.getElementById('currentLetter').textContent = words[currentWordIndex];
-            
-            // 清除畫布
-            setTimeout(clearDrawing, 500);
-        }
-        
-        // 更新狀態
-        function updateStatus(status) {
-            drawingStatus.textContent = status;
-        }
-        
-        // 初始化系統
-        window.addEventListener('load', init);
-        
-        // 防止滾動
-        document.addEventListener('touchmove', function(e) {
-            if (e.target === drawingCanvas) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+        window.loginAsTeacher = loginAsTeacher;
     </script>
+
+    <div id="artwork_modal" onclick="closeArt()"><span class="close-art">&times;</span><img id="big_art" src=""><div id="art_info" style="position: absolute; bottom: 50px; color: white; font-size: 20px;"></div></div>
+
+    <div id="page_entry" class="page active">
+        <h1>空中寫字教學系統</h1>
+        <div class="card">
+            <button onclick="showPage('page_teacher_login')">老師管理端</button>
+            <button onclick="showPage('page_student_info')" style="background: white;">學生練習端</button>
+        </div>
+    </div>
+
+    <div id="page_teacher_login" class="page">
+        <div class="card">
+            <h2>老師登入</h2>
+            <input type="text" id="teacherAccount" placeholder="帳號">
+            <input type="password" id="teacherPassword" placeholder="密碼">
+            <button onclick="loginAsTeacher()">登入</button>
+            <button onclick="showPage('page_entry')" style="background:none; color:#aaa;">返回</button>
+        </div>
+    </div>
+
+    <div id="page_teacher_dash" class="page">
+        <div class="room-manager">
+            <span style="font-size:14px; color:#aaa;">房號管理:</span>
+            <div id="room_chips_container" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+            <div style="display:flex; gap:5px; margin-left:auto;">
+                <input type="text" id="class_room_id" placeholder="新房號" style="margin:0; padding:5px; width:80px; font-size:12px;">
+                <button onclick="saveRoomID()" style="margin:0; padding:5px 10px; width:auto; font-size:12px;">新增</button>
+            </div>
+        </div>
+        <div class="dash-container">
+            <div class="monitor-panel">
+                <h4>單字管理</h4>
+                <div style="display:flex; gap:10px;"><input type="text" id="new_word" placeholder="新單字" style="margin:0;"><button onclick="addNewWord()" style="width:80px; margin:0;">加入</button></div>
+                <div id="word_list" style="height:150px; overflow-y:auto; background:rgba(0,0,0,0.4); margin-top:10px; border-radius:10px; text-align:left; padding:10px;"></div>
+                <div style="display:flex; gap:10px; margin-top:10px;"><button onclick="publishSelectedWords()" style="background:#00FF00;">發佈勾選</button><button onclick="deleteSelectedWords()" style="background:#ff4d4d; color:white;">選擇剷除</button></div>
+                <div style="font-size:12px; color:#00FF00; margin-top:8px;">當前發佈: <span id="published_display" style="color:#fff;">同步中...</span></div>
+            </div>
+            <div class="monitor-panel" style="flex: 2;">
+                <h3>成績榜 (房號: <span id="room_display" style="color:#00FF00;">--</span>)</h3>
+                <div style="max-height: 450px; overflow-y: auto;"><table id="leaderboard"><thead><tr><th>作品</th><th>班級姓名</th><th>平均分</th><th>明細</th><th>進度</th></tr></thead><tbody></tbody></table></div>
+                <button onclick="clearScores()" style="background:#666; font-size:12px; margin-top:15px; width:auto; padding:5px 15px;">清空房內成績</button>
+            </div>
+        </div>
+        <button onclick="showPage('page_entry')" style="background:none; color:#aaa; margin-top:20px; cursor:pointer;">登出</button>
+    </div>
+
+    <div id="page_student_info" class="page">
+        <div class="card">
+            <h2>學生登記</h2>
+            <input type="text" id="s_class" placeholder="班級">
+            <input type="text" id="s_name" placeholder="姓名">
+            <input type="text" id="s_room_input" placeholder="房號">
+            <button onclick="handleStudentEntry()">進入練習</button>
+            <button onclick="showPage('page_entry')" style="background:none; color:#aaa;">返回</button>
+        </div>
+    </div>
+
+    <div id="page_writing" class="page" style="padding:0;">
+        <video id="input_video"></video><canvas id="overlay_canvas"></canvas>
+        <div class="writing-ui"><div class="writing-info"><div style="font-size:36px; font-weight:bold; color:#00FF00;" id="target_word">READY</div><div id="progress_info" style="font-size:16px; color:#aaa; margin-top:5px;">進度: 0 / 0</div></div></div>
+        <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); display:flex; gap:20px;">
+            <button onclick="clearCanvas()" style="width:100px; background:white;">重寫</button>
+            <button onclick="calculateFinalScore()" id="btn_submit_score" style="width:150px; background:#00FF00;">提交評分</button>
+        </div>
+    </div>
+
+    <div id="result_modal"><div style="font-size: 20px;">本字得分</div><div id="res_score">0</div><div id="res_stars" style="font-size:32px; color:#f1c40f;">⭐⭐⭐</div><button onclick="toNextStep()" style="background:#27ae60; color:white; margin-top:20px; width:100%;">下一個</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<script>
+    let cloudData = { roomID: "", roomList: [], wordBank: [], publishedWords: [] };
+    let unsubResults = null;
+
+    async function syncConfigFromCloud() {
+        const { db, doc, getDoc, setDoc } = window.firebaseDB;
+        const configDoc = await getDoc(doc(db, "configs", "main"));
+        if (configDoc.exists()) { cloudData = { ...cloudData, ...configDoc.data() }; }
+        else { await setDoc(doc(db, "configs", "main"), { roomList: [], wordBank: ["HELLO"], publishedWords: [], roomID: "" }); }
+    }
+
+    async function updateCloudConfig(newData) {
+        const { db, doc, updateDoc } = window.firebaseDB;
+        await updateDoc(doc(db, "configs", "main"), newData);
+    }
+
+    async function saveRoomID() {
+        const input = document.getElementById('class_room_id');
+        let id = input.value.trim();
+        if (!id) return;
+        await syncConfigFromCloud();
+        if (!cloudData.roomList.includes(id)) { cloudData.roomList.push(id); }
+        cloudData.roomID = id;
+        await updateCloudConfig({ roomList: cloudData.roomList, roomID: id });
+        input.value = "";
+        renderTeacherDash();
+    }
+
+    async function selectRoom(id) {
+        cloudData.roomID = id;
+        await updateCloudConfig({ roomID: id });
+        renderTeacherDash();
+    }
+
+    async function deleteRoom(id, event) {
+        event.stopPropagation();
+        if(confirm(`刪除房號 ${id}？`)) {
+            await syncConfigFromCloud();
+            cloudData.roomList = cloudData.roomList.filter(r => r !== id);
+            if(cloudData.roomID === id) cloudData.roomID = "";
+            await updateCloudConfig({ roomList: cloudData.roomList, roomID: cloudData.roomID });
+            const { db, collection, query, where, getDocs, deleteDoc, doc } = window.firebaseDB;
+            const snapshot = await getDocs(query(collection(db, "results"), where("room", "==", id)));
+            snapshot.forEach(async (d) => await deleteDoc(doc(db, "results", d.id)));
+            renderTeacherDash();
+        }
+    }
+
+    async function addNewWord() {
+        let w = document.getElementById('new_word').value.toUpperCase().trim();
+        if(w && !cloudData.wordBank.includes(w)) {
+            cloudData.wordBank.push(w);
+            await updateCloudConfig({ wordBank: cloudData.wordBank });
+            renderWordListOnly();
+            document.getElementById('new_word').value = "";
+        }
+    }
+
+    async function publishSelectedWords() {
+        const cbs = document.querySelectorAll('.word-checkbox:checked');
+        cloudData.publishedWords = Array.from(cbs).map(c => c.value);
+        await updateCloudConfig({ publishedWords: cloudData.publishedWords });
+        renderTeacherDash();
+        alert("已發佈至學生端");
+    }
+
+    async function deleteSelectedWords() {
+        const cbs = document.querySelectorAll('.word-checkbox:checked');
+        const toDel = Array.from(cbs).map(c => c.value);
+        if(confirm("確定剷除？")) {
+            cloudData.wordBank = cloudData.wordBank.filter(w => !toDel.includes(w));
+            cloudData.publishedWords = cloudData.publishedWords.filter(w => !toDel.includes(w));
+            await updateCloudConfig({ wordBank: cloudData.wordBank, publishedWords: cloudData.publishedWords });
+            renderTeacherDash();
+        }
+    }
+
+    function renderWordListOnly() {
+        const list = document.getElementById('word_list');
+        list.innerHTML = "";
+        cloudData.wordBank.forEach(w => {
+            list.innerHTML += `<div><input type="checkbox" class="word-checkbox" value="${w}"> ${w}</div>`;
+        });
+    }
+
+    function renderTeacherDash() {
+        document.getElementById('room_display').innerText = cloudData.roomID || "--";
+        document.getElementById('published_display').innerText = cloudData.publishedWords.join(', ') || "無";
+        const chips = document.getElementById('room_chips_container');
+        chips.innerHTML = "";
+        cloudData.roomList.forEach(id => {
+            const active = (id === cloudData.roomID) ? "active" : "";
+            chips.innerHTML += `<div class="room-chip ${active}" onclick="selectRoom('${id}')">🏠 ${id}<span class="del-x" onclick="deleteRoom('${id}', event)">×</span></div>`;
+        });
+        renderWordListOnly();
+        const { db, collection, query, where, onSnapshot } = window.firebaseDB;
+        if(unsubResults) unsubResults();
+        const q = query(collection(db, "results"), where("room", "==", cloudData.roomID));
+        unsubResults = onSnapshot(q, (snapshot) => {
+            const tbody = document.querySelector('#leaderboard tbody');
+            tbody.innerHTML = "";
+            let data = [];
+            snapshot.forEach(doc => data.push(doc.data()));
+            data.sort((a,b) => b.avg - a.avg).forEach(r => {
+                let detail = Object.entries(r.details).map(([w, s]) => `${w}: ${s}`).join(' | ');
+                let thumbHtml = r.bestImg ? `<img src="${r.bestImg}" class="work-thumb" onclick="openArt('${r.bestImg}', '${r.name}')">` : "-";
+                tbody.innerHTML += `<tr><td>${thumbHtml}</td><td><b>[${r.class}] ${r.name}</b></td><td style="color:#00FF00; font-size:16px;">${r.avg}</td><td style="text-align:left; font-size:11px; color:#bbb;">${detail}</td><td>${r.finished}/${r.total}</td></tr>`;
+            });
+        });
+    }
+
+    function openArt(src, name) { document.getElementById('big_art').src = src; document.getElementById('art_info').innerText = "學生: " + name; document.getElementById('artwork_modal').style.display = "flex"; }
+    function closeArt() { document.getElementById('artwork_modal').style.display = "none"; }
+
+    let studentState = { room:"", class:"", name:"", queue:[], currentIdx: 0, scores:{}, bestScore: 0, bestImg: "" };
+    async function handleStudentEntry() {
+        await syncConfigFromCloud();
+        let room = document.getElementById('s_room_input').value.trim();
+        if(!cloudData.roomList.includes(room)) { alert("房號不存在！"); return; }
+        if(cloudData.publishedWords.length === 0) { alert("內容未發佈！"); return; }
+        studentState = { room, class: document.getElementById('s_class').value, name: document.getElementById('s_name').value, queue: [...cloudData.publishedWords], currentIdx: 0, scores: {}, bestScore: 0, bestImg: "" };
+        showPage('page_writing');
+    }
+
+    function updateWritingUI() {
+        const w = studentState.queue[studentState.currentIdx];
+        document.getElementById('target_word').innerText = w || "END";
+        document.getElementById('progress_info').innerText = `進度: ${studentState.currentIdx + 1} / ${studentState.queue.length}`;
+        document.getElementById('btn_submit_score').disabled = false;
+        document.getElementById('btn_submit_score').innerText = "提交評分";
+    }
+
+    const video = document.getElementById('input_video'), canvas = document.getElementById('overlay_canvas'), ctx = canvas.getContext('2d');
+    let allPaths = [], currentStroke = [], lastX = 0, lastY = 0;
+
+    function onResults(res) {
+        ctx.save(); ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
+        ctx.drawImage(res.image, 0, 0, canvas.width, canvas.height);
+        const w = studentState.queue[studentState.currentIdx];
+        if(w) {
+            let fs = Math.min(250, (canvas.width / w.length) * 1.2);
+            ctx.save(); ctx.translate(canvas.width/2, canvas.height/2); ctx.scale(-1, 1); ctx.globalAlpha = 0.5; ctx.fillStyle = 'white';
+            ctx.font = `bold ${fs}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText(w, 0, 0); ctx.restore();
+        }
+        if (res.multiHandLandmarks && res.multiHandLandmarks[0]) {
+            const h = res.multiHandLandmarks[0];
+            const d = Math.sqrt(Math.pow(h[4].x-h[8].x,2)+Math.pow(h[4].y-h[8].y,2));
+            const rx = h[8].x * canvas.width, ry = h[8].y * canvas.height;
+            if (lastX === 0) { lastX = rx; lastY = ry; }
+            const sx = lastX + (rx - lastX) * 0.3, sy = lastY + (ry - lastY) * 0.3;
+            lastX = sx; lastY = sy;
+            if (d < 0.035) currentStroke.push({ x: sx, y: sy });
+            else if (currentStroke.length > 0) { allPaths.push([...currentStroke]); currentStroke = []; }
+            ctx.fillStyle = "red"; ctx.beginPath(); ctx.arc(sx, sy, 8, 0, Math.PI*2); ctx.fill();
+        }
+        ctx.strokeStyle = '#00FF00'; ctx.lineWidth = 15; ctx.lineCap = 'round';
+        [...allPaths, currentStroke].forEach(p => {
+            if (p.length < 2) return;
+            ctx.beginPath(); ctx.moveTo(p[0].x, p[0].y);
+            for(let i=1; i<p.length-1; i++) ctx.quadraticCurveTo(p[i].x, p[i].y, (p[i].x+p[i+1].x)/2, (p[i].y+p[i+1].y)/2);
+            ctx.stroke();
+        });
+        ctx.restore();
+    }
+
+    async function calculateFinalScore() {
+        const btn = document.getElementById('btn_submit_score');
+        btn.disabled = true;
+        btn.innerText = "評分中...";
+
+        const w = studentState.queue[studentState.currentIdx];
+        const off = document.createElement('canvas'); off.width = canvas.width; off.height = canvas.height;
+        const octx = off.getContext('2d');
+        let fs = Math.min(250, (off.width / w.length) * 1.2);
+        octx.save(); octx.translate(off.width/2, off.height/2); octx.scale(-1,1); octx.font = `bold ${fs}px Arial`; octx.textAlign="center"; octx.textBaseline="middle"; octx.lineWidth = 25; octx.strokeText(w, 0, 0); octx.fillText(w, 0, 0); octx.restore();
+        const tD = octx.getImageData(0,0,off.width,off.height).data;
+        octx.clearRect(0,0,off.width,off.height); octx.strokeStyle = '#00FF00'; octx.lineWidth = 15; octx.lineCap = 'round';
+        [...allPaths, currentStroke].forEach(p => {
+            if (p.length < 2) return;
+            octx.beginPath(); octx.moveTo(p[0].x, p[0].y);
+            for(let i=1; i<p.length-1; i++) octx.quadraticCurveTo(p[i].x, p[i].y, (p[i].x+p[i+1].x)/2, (p[i].y+p[i+1].y)/2);
+            octx.stroke();
+        });
+        let img = off.toDataURL("image/png");
+        const sD = octx.getImageData(0,0,off.width,off.height).data;
+        let m=0, t=0; for (let i=3; i<tD.length; i+=16) { if(tD[i]>0){ t++; if(sD[i]>0) m++; } }
+        
+        let coverage = (m/t)*100;
+        let finalScore = 0;
+        if (coverage > 65) { finalScore = 90 + (coverage - 65) / 3.5; }
+        else if (coverage > 35) { finalScore = 70 + (coverage - 35) * 0.6; }
+        else if (coverage > 10) { finalScore = 40 + (coverage * 2); }
+        else { finalScore = 20; }
+        
+        finalScore = Math.min(100, Math.round(finalScore));
+        studentState.scores[w] = finalScore;
+        if (finalScore >= studentState.bestScore) { studentState.bestScore = finalScore; studentState.bestImg = img; }
+
+        const { db, setDoc, doc } = window.firebaseDB;
+        let fin = Object.keys(studentState.scores).length, tot = studentState.queue.length, av = Math.round(Object.values(studentState.scores).reduce((a,b)=>a+b,0) / fin);
+        await setDoc(doc(db, "results", `${studentState.room}_${studentState.class}_${studentState.name}`), {
+            room: studentState.room, class: studentState.class, name: studentState.name, details: studentState.scores, finished: fin, total: tot, avg: av, bestImg: studentState.bestImg
+        });
+        
+        document.getElementById('res_score').innerText = finalScore;
+        document.getElementById('res_stars').innerText = "⭐".repeat(finalScore >= 90 ? 5 : (finalScore >= 75 ? 4 : 3));
+        document.getElementById('result_modal').style.display = "block";
+    }
+
+    function toNextStep() {
+        document.getElementById('result_modal').style.display = "none";
+        clearCanvas();
+        if(studentState.currentIdx < studentState.queue.length - 1) {
+            studentState.currentIdx++;
+            updateWritingUI();
+        } else {
+            alert("挑戰結束");
+            showPage('page_entry');
+        }
+    }
+
+    async function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'page_teacher_dash') { await syncConfigFromCloud(); renderTeacherDash(); }
+        if(id === 'page_writing') {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            updateWritingUI();
+            const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+            hands.setOptions({ maxNumHands:1, modelComplexity:1, minDetectionConfidence:0.7, minTrackingConfidence:0.7 });
+            hands.onResults(onResults);
+            new Camera(video, { onFrame: async () => { await hands.send({image: video}); }, width:1280, height:720 }).start();
+        }
+    }
+    function clearCanvas() { allPaths = []; currentStroke = []; lastX = 0; lastY = 0; }
+    async function clearScores() { if(confirm("清空？")) { const { db, collection, query, where, getDocs, deleteDoc, doc } = window.firebaseDB; const snapshot = await getDocs(query(collection(db, "results"), where("room", "==", cloudData.roomID))); snapshot.forEach(async (d) => await deleteDoc(doc(db, "results", d.id))); } }
+</script>
 </body>
 </html>
