@@ -27,22 +27,21 @@
             width: 100vw;
             display: flex;
             flex-direction: column;
-            padding: 10px;
+            padding: 15px;
             overflow: hidden;
         }
 
         .header {
             text-align: center;
-            padding: 15px 10px;
+            padding: 15px 0;
             color: white;
             flex-shrink: 0;
         }
 
         h1 {
             font-size: 1.8rem;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .subtitle {
@@ -50,33 +49,31 @@
             opacity: 0.9;
         }
 
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+        .status-bar {
+            display: flex;
+            justify-content: space-around;
             margin: 15px 0;
             flex-shrink: 0;
         }
 
-        .status-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 12px;
+        .status-item {
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 80px;
         }
 
         .status-label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             opacity: 0.8;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .status-value {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: #4fc3f7;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 10px;
         }
 
         .main-content {
@@ -104,7 +101,7 @@
 
         #targetWord {
             position: absolute;
-            font-size: 35vh;
+            font-size: 30vh;
             font-weight: 900;
             color: rgba(255, 255, 255, 0.8);
             display: flex;
@@ -112,7 +109,6 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            text-shadow: 0 0 30px rgba(0, 150, 255, 0.5);
             z-index: 1;
         }
 
@@ -129,6 +125,7 @@
         .camera-section {
             flex: 0 0 45%;
             min-height: 0;
+            position: relative;
         }
 
         .camera-container {
@@ -146,37 +143,27 @@
             height: 100%;
             object-fit: cover;
             transform: scaleX(-1);
-        }
-
-        #handCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
+            background: #000;
         }
 
         .gesture-indicator {
             position: absolute;
             bottom: 10px;
             right: 10px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 8px 12px;
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: bold;
             z-index: 3;
-            transition: all 0.3s ease;
         }
 
         .gesture-active {
             background: rgba(76, 175, 80, 0.9);
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
         }
 
-        .controls-section {
+        .controls {
             flex-shrink: 0;
             padding: 10px 0;
         }
@@ -189,21 +176,18 @@
 
         .control-btn {
             background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
             border: none;
             border-radius: 12px;
-            padding: 16px 10px;
+            padding: 15px 5px;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             gap: 5px;
-            touch-action: manipulation;
         }
 
         .control-btn:active {
@@ -213,7 +197,6 @@
 
         .btn-icon {
             font-size: 1.5rem;
-            margin-bottom: 2px;
         }
 
         #startBtn {
@@ -228,59 +211,19 @@
             background: linear-gradient(135deg, #2196F3, #0D47A1);
         }
 
-        /* 得分顯示 */
-        .score-display {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            z-index: 100;
-            display: none;
-            min-width: 250px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .score-display.active {
-            display: block;
-            animation: popIn 0.3s ease;
-        }
-
-        @keyframes popIn {
-            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
-        .score-value {
-            font-size: 4rem;
-            font-weight: bold;
-            margin: 15px 0;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .score-comment {
-            font-size: 1.2rem;
-            margin: 10px 0;
-        }
-
-        .close-score {
-            background: #2196F3;
-            color: white;
-            border: none;
-            padding: 10px 20px;
+        .instructions {
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
-            font-size: 1rem;
-            margin-top: 15px;
-            cursor: pointer;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            line-height: 1.4;
         }
 
-        /* 加載畫面 */
+        .instructions strong {
+            color: #4fc3f7;
+        }
+
         .loader {
             position: fixed;
             top: 0;
@@ -297,8 +240,8 @@
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border: 5px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: #4CAF50;
@@ -310,106 +253,45 @@
             to { transform: rotate(360deg); }
         }
 
-        .loader-text {
-            text-align: center;
-            font-size: 1.1rem;
-            max-width: 80%;
-            line-height: 1.5;
-        }
-
-        /* 提示信息 */
-        .tip-box {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            border-left: 4px solid #4fc3f7;
-        }
-
-        .tip-box strong {
-            color: #4fc3f7;
-        }
-
-        /* 響應式調整 */
+        /* 橫向模式調整 */
         @media (orientation: landscape) {
             .main-content {
                 flex-direction: row;
             }
-            
             .target-section, .camera-section {
                 flex: 1;
             }
-            
             #targetWord {
                 font-size: 25vh;
-            }
-            
-            .controls-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-height: 700px) {
-            #targetWord {
-                font-size: 25vh;
-            }
-            
-            .status-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            
-            .control-btn {
-                padding: 12px 8px;
-                font-size: 0.85rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 加載畫面 -->
     <div class="loader" id="loader">
         <div class="spinner"></div>
-        <div class="loader-text">
-            <h3>正在載入手勢辨識系統</h3>
-            <p>第一次載入可能需要一些時間，請稍候...</p>
-            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
-                請確保已允許使用相機權限
-            </p>
-        </div>
-    </div>
-
-    <!-- 得分彈窗 -->
-    <div class="score-display" id="scoreDisplay">
-        <h2>🎯 評分結果</h2>
-        <div class="score-value" id="scoreValue">0</div>
-        <div class="score-comment" id="scoreComment">--</div>
-        <button class="close-score" onclick="closeScore()">繼續</button>
+        <h3>準備中...</h3>
+        <p id="loaderText">請稍候</p>
     </div>
 
     <div class="app-container">
         <div class="header">
-            <h1>✍️ 空中手勢書寫</h1>
-            <p class="subtitle">兩指黏合即可在空中書寫字母</p>
+            <h1>✍️ 手勢書寫測試</h1>
+            <p class="subtitle">簡單的手勢偵測版本</p>
         </div>
 
-        <div class="status-grid">
-            <div class="status-card">
+        <div class="status-bar">
+            <div class="status-item">
                 <div class="status-label">當前字母</div>
                 <div class="status-value" id="currentLetter">A</div>
             </div>
-            <div class="status-card">
+            <div class="status-item">
                 <div class="status-label">書寫狀態</div>
                 <div class="status-value" id="drawingStatus">等待</div>
             </div>
-            <div class="status-card">
-                <div class="status-label">手指距離</div>
-                <div class="status-value" id="fingerDistance">--</div>
-            </div>
-            <div class="status-card">
-                <div class="status-label">偵測手數</div>
-                <div class="status-value" id="handsDetected">0</div>
+            <div class="status-item">
+                <div class="status-label">模式</div>
+                <div class="status-value" id="modeStatus">觸控</div>
             </div>
         </div>
 
@@ -423,8 +305,7 @@
 
             <div class="camera-section">
                 <div class="camera-container">
-                    <video id="cameraVideo" playsinline></video>
-                    <canvas id="handCanvas"></canvas>
+                    <video id="cameraVideo" autoplay playsinline></video>
                     <div class="gesture-indicator" id="gestureIndicator">
                         👆 準備中
                     </div>
@@ -432,11 +313,11 @@
             </div>
         </div>
 
-        <div class="controls-section">
+        <div class="controls">
             <div class="controls-grid">
                 <button class="control-btn" id="startBtn">
-                    <span class="btn-icon">🚀</span>
-                    <span>開始偵測</span>
+                    <span class="btn-icon">📷</span>
+                    <span>開啟鏡頭</span>
                 </button>
                 <button class="control-btn" id="clearBtn">
                     <span class="btn-icon">🧹</span>
@@ -448,505 +329,352 @@
                 </button>
             </div>
             
-            <div class="tip-box">
-                <strong>使用說明：</strong> 1. 點擊「開始偵測」 2. 將手舉到鏡頭前 3. 用食指和拇指指尖黏合開始書寫 4. 完成後點「評分」
+            <div class="instructions">
+                <strong>使用說明：</strong> 
+                1. 點「開啟鏡頭」 2. 允許相機權限 3. 用手在鏡頭前移動 4. 用手指觸控畫面書寫
             </div>
         </div>
     </div>
 
-    <!-- MediaPipe 庫 -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-
     <script>
-        // ========== 全局變數 ==========
+        // 獲取DOM元素
         const loader = document.getElementById('loader');
-        const scoreDisplay = document.getElementById('scoreDisplay');
-        const scoreValue = document.getElementById('scoreValue');
-        const scoreComment = document.getElementById('scoreComment');
-        
-        const targetWordElement = document.getElementById('targetWord');
+        const loaderText = document.getElementById('loaderText');
+        const targetWord = document.getElementById('targetWord');
         const drawingCanvas = document.getElementById('drawingCanvas');
         const drawingCtx = drawingCanvas.getContext('2d');
         const cameraVideo = document.getElementById('cameraVideo');
-        const handCanvas = document.getElementById('handCanvas');
-        const handCtx = handCanvas.getContext('2d');
-        
         const startBtn = document.getElementById('startBtn');
         const clearBtn = document.getElementById('clearBtn');
         const nextBtn = document.getElementById('nextBtn');
-        
-        const drawingStatusElement = document.getElementById('drawingStatus');
-        const fingerDistanceElement = document.getElementById('fingerDistance');
-        const handsDetectedElement = document.getElementById('handsDetected');
+        const drawingStatus = document.getElementById('drawingStatus');
+        const modeStatus = document.getElementById('modeStatus');
         const gestureIndicator = document.getElementById('gestureIndicator');
         
         // 狀態變數
         let isDrawing = false;
-        let isHandDetectionActive = false;
+        let isCameraOn = false;
         let currentScore = 0;
         const words = ['A', 'B', 'C', 'D', 'E'];
         let currentWordIndex = 0;
         
-        // 手勢變數
-        let lastDrawingPoint = null;
-        const PINCH_THRESHOLD = 25;
-        let hands = null;
-        
         // 繪製設定
-        const DRAW_COLOR = '#FF5722';
-        const DRAW_WIDTH = 10;
+        drawingCtx.lineWidth = 8;
+        drawingCtx.lineCap = 'round';
+        drawingCtx.lineJoin = 'round';
+        drawingCtx.strokeStyle = '#FF5722';
         
-        // ========== 初始化 ==========
+        // 初始化
         function init() {
-            console.log('初始化 iPad 手勢書寫系統...');
+            console.log('系統初始化...');
             
-            // 設定畫布
-            resizeCanvases();
+            // 調整畫布大小
+            resizeCanvas();
             
             // 設定事件監聽
             setupEventListeners();
             
-            // 初始化畫筆
-            drawingCtx.lineWidth = DRAW_WIDTH;
-            drawingCtx.lineCap = 'round';
-            drawingCtx.lineJoin = 'round';
-            drawingCtx.strokeStyle = DRAW_COLOR;
+            // 更新初始狀態
+            updateStatus('等待開始');
+            modeStatus.textContent = '觸控';
             
-            // 手部畫布設定
-            handCtx.lineWidth = 2;
-            
-            // 設定初始字母
-            updateTargetWord();
-            
-            // 更新狀態
-            updateDrawingStatus('點擊「開始偵測」');
-            
-            // 監聽視窗大小變化
-            window.addEventListener('resize', resizeCanvases);
-            window.addEventListener('orientationchange', () => {
-                setTimeout(resizeCanvases, 300);
-            });
+            // 隱藏加載畫面
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 1000);
             
             console.log('初始化完成');
         }
         
-        // ========== 畫布尺寸調整 ==========
-        function resizeCanvases() {
-            const targetContainer = drawingCanvas.parentElement;
-            const cameraContainer = handCanvas.parentElement;
-            
-            // 確保畫布尺寸與容器一致
-            drawingCanvas.width = targetContainer.clientWidth;
-            drawingCanvas.height = targetContainer.clientHeight;
-            
-            handCanvas.width = cameraContainer.clientWidth;
-            handCanvas.height = cameraContainer.clientHeight;
-            
-            // 調整字母大小
-            adjustFontSize();
-            
-            console.log('畫布尺寸已調整:', drawingCanvas.width, 'x', drawingCanvas.height);
+        // 調整畫布大小
+        function resizeCanvas() {
+            const container = drawingCanvas.parentElement;
+            drawingCanvas.width = container.clientWidth;
+            drawingCanvas.height = container.clientHeight;
         }
         
-        function adjustFontSize() {
-            // 根據容器高度動態調整字體大小
-            const container = targetWordElement.parentElement;
-            const fontSize = Math.min(container.clientHeight * 0.7, container.clientWidth * 0.7);
-            targetWordElement.style.fontSize = `${fontSize}px`;
-        }
-        
-        // ========== 事件監聽器 ==========
+        // 設定事件監聽
         function setupEventListeners() {
+            // 視窗大小變化
+            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('orientationchange', () => {
+                setTimeout(resizeCanvas, 300);
+            });
+            
             // 按鈕事件
-            startBtn.addEventListener('click', startHandDetection);
-            startBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                startHandDetection();
-            });
-            
+            startBtn.addEventListener('click', toggleCamera);
             clearBtn.addEventListener('click', clearDrawing);
-            clearBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                clearDrawing();
-            });
-            
             nextBtn.addEventListener('click', evaluateAndNext);
-            nextBtn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                evaluateAndNext();
+            
+            // 觸控事件 - 用於書寫
+            drawingCanvas.addEventListener('touchstart', startTouchDrawing);
+            drawingCanvas.addEventListener('touchmove', continueTouchDrawing);
+            drawingCanvas.addEventListener('touchend', endTouchDrawing);
+            
+            // 滑鼠事件（在電腦上測試用）
+            drawingCanvas.addEventListener('mousedown', startMouseDrawing);
+            drawingCanvas.addEventListener('mousemove', continueMouseDrawing);
+            drawingCanvas.addEventListener('mouseup', endMouseDrawing);
+            drawingCanvas.addEventListener('mouseleave', endMouseDrawing);
+            
+            // 監聽相機流
+            cameraVideo.addEventListener('play', () => {
+                console.log('鏡頭開始運作');
+                isCameraOn = true;
+                gestureIndicator.textContent = '📹 鏡頭開啟';
+                updateStatus('鏡頭開啟中');
+                startSimpleHandDetection();
             });
-            
-            // 防止滾動
-            document.addEventListener('touchmove', (e) => {
-                if (e.target.tagName !== 'BUTTON') {
-                    e.preventDefault();
-                }
-            }, { passive: false });
         }
         
-        // ========== 手勢偵測啟動 ==========
-        async function startHandDetection() {
-            if (isHandDetectionActive) return;
-            
-            try {
-                console.log('啟動手勢偵測...');
-                updateDrawingStatus('啟動中...');
-                
-                // 請求鏡頭權限
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'user',
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    }
-                });
-                
-                cameraVideo.srcObject = stream;
-                
-                // 等待影片載入
-                await new Promise(resolve => {
-                    cameraVideo.onloadedmetadata = () => {
-                        console.log('鏡頭準備就緒');
-                        resolve();
-                    };
-                });
-                
-                // 初始化 MediaPipe Hands
-                hands = new self.Hands({
-                    locateFile: (file) => {
-                        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-                    }
-                });
-                
-                hands.setOptions({
-                    maxNumHands: 1,
-                    modelComplexity: 1,
-                    minDetectionConfidence: 0.5,
-                    minTrackingConfidence: 0.5
-                });
-                
-                hands.onResults(processHandResults);
-                
-                // 開始偵測循環
-                const detectFrame = async () => {
-                    if (!isHandDetectionActive) return;
-                    
-                    try {
-                        await hands.send({ image: cameraVideo });
-                        requestAnimationFrame(detectFrame);
-                    } catch (err) {
-                        console.error('偵測錯誤:', err);
-                    }
-                };
-                
-                // 更新狀態
-                isHandDetectionActive = true;
-                startBtn.innerHTML = '<span class="btn-icon">✅</span><span>偵測中</span>';
-                startBtn.style.opacity = '0.7';
-                updateDrawingStatus('偵測中...');
-                
-                // 隱藏加載畫面
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 500);
-                
-                // 開始偵測
-                detectFrame();
-                
-            } catch (error) {
-                console.error('啟動失敗:', error);
-                updateDrawingStatus('啟動失敗');
-                
-                if (error.name === 'NotAllowedError') {
-                    alert('請允許使用相機權限！\n\n1. 點擊 Safari 的「aA」圖標\n2. 選擇「網站設定」\n3. 允許「相機」權限');
+        // 切換鏡頭
+        async function toggleCamera() {
+            if (isCameraOn) {
+                // 關閉鏡頭
+                const stream = cameraVideo.srcObject;
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
                 }
-                
-                loader.style.display = 'none';
-            }
-        }
-        
-        // ========== 手勢結果處理 ==========
-        function processHandResults(results) {
-            // 清空手部畫布
-            handCtx.clearRect(0, 0, handCanvas.width, handCanvas.height);
-            
-            // 檢查是否有偵測到手
-            if (!results.multiHandLandmarks || results.multiHandLandmarks.length === 0) {
-                handsDetectedElement.textContent = '0';
-                gestureIndicator.textContent = '✋ 舉起手';
-                gestureIndicator.classList.remove('gesture-active');
-                
-                if (isDrawing) {
-                    endDrawingStroke();
-                    isDrawing = false;
-                }
-                return;
-            }
-            
-            // 更新手部數量
-            const handCount = results.multiHandLandmarks.length;
-            handsDetectedElement.textContent = handCount;
-            
-            // 處理第一隻手
-            const landmarks = results.multiHandLandmarks[0];
-            drawHandSkeleton(landmarks);
-            
-            // 取得食指和拇指指尖（索引 8 和 4）
-            const indexFinger = landmarks[8];
-            const thumb = landmarks[4];
-            
-            // 計算距離
-            const indexX = indexFinger.x * handCanvas.width;
-            const indexY = indexFinger.y * handCanvas.height;
-            const thumbX = thumb.x * handCanvas.width;
-            const thumbY = thumb.y * handCanvas.height;
-            
-            const distance = Math.sqrt(
-                Math.pow(indexX - thumbX, 2) + Math.pow(indexY - thumbY, 2)
-            );
-            
-            fingerDistanceElement.textContent = Math.round(distance);
-            gestureIndicator.textContent = `✌️ ${Math.round(distance)}px`;
-            
-            // 判斷是否兩指黏合
-            if (distance < PINCH_THRESHOLD) {
-                // 書寫模式
-                gestureIndicator.textContent = `🖊️ 書寫中`;
-                gestureIndicator.classList.add('gesture-active');
-                
-                // 計算書寫點（兩指中間）
-                const drawPoint = {
-                    x: (indexX + thumbX) / 2,
-                    y: (indexY + thumbY) / 2
-                };
-                
-                // 轉換到書寫畫布座標
-                const targetRect = drawingCanvas.getBoundingClientRect();
-                const handRect = handCanvas.getBoundingClientRect();
-                
-                const convertedPoint = {
-                    x: ((drawPoint.x / handRect.width) * targetRect.width),
-                    y: ((drawPoint.y / handRect.height) * targetRect.height)
-                };
-                
-                // 開始或繼續繪製
-                if (!isDrawing) {
-                    startDrawingStroke(convertedPoint);
-                    updateDrawingStatus('書寫中...');
-                } else {
-                    continueDrawingStroke(convertedPoint);
-                }
-                
-                isDrawing = true;
+                cameraVideo.srcObject = null;
+                isCameraOn = false;
+                startBtn.innerHTML = '<span class="btn-icon">📷</span><span>開啟鏡頭</span>';
+                gestureIndicator.textContent = '📷 鏡頭關閉';
+                updateStatus('鏡頭已關閉');
             } else {
-                // 非書寫模式
-                gestureIndicator.classList.remove('gesture-active');
-                
-                if (isDrawing) {
-                    endDrawingStroke();
-                    updateDrawingStatus('準備書寫');
+                // 開啟鏡頭
+                try {
+                    loader.style.display = 'flex';
+                    loaderText.textContent = '正在請求鏡頭權限...';
+                    
+                    const constraints = {
+                        video: {
+                            facingMode: 'user',
+                            width: { ideal: 640 },
+                            height: { ideal: 480 }
+                        }
+                    };
+                    
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    cameraVideo.srcObject = stream;
+                    startBtn.innerHTML = '<span class="btn-icon">⏹️</span><span>關閉鏡頭</span>';
+                    
+                    loaderText.textContent = '鏡頭已開啟！';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 1000);
+                    
+                } catch (error) {
+                    console.error('無法開啟鏡頭:', error);
+                    loader.style.display = 'none';
+                    alert('無法開啟鏡頭：' + error.message + '\n\n請確認：\n1. 已允許相機權限\n2. 沒有其他應用程式使用相機\n3. 在 Safari 中開啟此頁面');
+                    
+                    if (error.name === 'NotAllowedError') {
+                        // iPad Safari 權限提示
+                        alert('請在 Safari 中：\n1. 點擊網址欄的「aA」圖標\n2. 選擇「網站設定」\n3. 將「相機」設為「允許」\n4. 重新整理頁面');
+                    }
                 }
-                
-                isDrawing = false;
             }
         }
         
-        // ========== 繪製手部骨架 ==========
-        function drawHandSkeleton(landmarks) {
-            // 連接線
-            const connections = [
-                [0,1],[1,2],[2,3],[3,4],          // 拇指
-                [0,5],[5,6],[6,7],[7,8],          // 食指
-                [0,9],[9,10],[10,11],[11,12],     // 中指
-                [0,13],[13,14],[14,15],[15,16],   // 無名指
-                [0,17],[17,18],[18,19],[19,20],   // 小指
-                [5,9],[9,13],[13,17]              // 手掌
-            ];
+        // 簡化的手勢偵測（基於色彩和移動）
+        function startSimpleHandDetection() {
+            if (!isCameraOn) return;
             
-            // 繪製連接線
-            handCtx.strokeStyle = '#00FF00';
-            connections.forEach(([start, end]) => {
-                const startX = landmarks[start].x * handCanvas.width;
-                const startY = landmarks[start].y * handCanvas.height;
-                const endX = landmarks[end].x * handCanvas.width;
-                const endY = landmarks[end].y * handCanvas.height;
-                
-                handCtx.beginPath();
-                handCtx.moveTo(startX, startY);
-                handCtx.lineTo(endX, endY);
-                handCtx.stroke();
-            });
+            console.log('啟動簡單手勢偵測');
             
-            // 繪製關節點
-            landmarks.forEach((landmark, i) => {
-                const x = landmark.x * handCanvas.width;
-                const y = landmark.y * handCanvas.height;
-                
-                handCtx.beginPath();
-                handCtx.arc(x, y, 4, 0, Math.PI * 2);
-                
-                // 特別標註食指和拇指指尖
-                if (i === 8 || i === 4) {
-                    handCtx.fillStyle = i === 8 ? '#FF0000' : '#0000FF';
-                } else {
-                    handCtx.fillStyle = '#FFFFFF';
+            // 建立一個隱藏的 canvas 來分析影片幀
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // 設定與影片相同的尺寸
+            tempCanvas.width = 160;  // 降低解析度以提高性能
+            tempCanvas.height = 120;
+            
+            let lastFrame = null;
+            let motionLevel = 0;
+            
+            function detectMotion() {
+                if (!isCameraOn || cameraVideo.paused || cameraVideo.ended) {
+                    return;
                 }
                 
-                handCtx.fill();
-            });
-        }
-        
-        // ========== 書寫功能 ==========
-        function startDrawingStroke(point) {
-            drawingCtx.beginPath();
-            drawingCtx.moveTo(point.x, point.y);
-            lastDrawingPoint = point;
-        }
-        
-        function continueDrawingStroke(point) {
-            if (!lastDrawingPoint) return;
+                try {
+                    // 繪製當前幀到臨時畫布
+                    tempCtx.drawImage(cameraVideo, 0, 0, tempCanvas.width, tempCanvas.height);
+                    const currentFrame = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                    
+                    if (lastFrame) {
+                        // 簡單的幀差法偵測移動
+                        let diff = 0;
+                        const data1 = lastFrame.data;
+                        const data2 = currentFrame.data;
+                        
+                        for (let i = 0; i < data1.length; i += 4) {
+                            const r1 = data1[i];
+                            const g1 = data1[i + 1];
+                            const b1 = data1[i + 2];
+                            const r2 = data2[i];
+                            const g2 = data2[i + 1];
+                            const b2 = data2[i + 2];
+                            
+                            const pixelDiff = Math.abs(r1 - r2) + Math.abs(g1 - g2) + Math.abs(b1 - b2);
+                            if (pixelDiff > 30) {
+                                diff++;
+                            }
+                        }
+                        
+                        // 計算移動程度（0-100）
+                        motionLevel = Math.min(100, Math.round((diff / (tempCanvas.width * tempCanvas.height)) * 1000));
+                        
+                        // 更新指示器
+                        if (motionLevel > 20) {
+                            gestureIndicator.textContent = `👋 偵測到移動 (${motionLevel}%)`;
+                            gestureIndicator.classList.add('gesture-active');
+                        } else {
+                            gestureIndicator.textContent = '👆 請移動手部';
+                            gestureIndicator.classList.remove('gesture-active');
+                        }
+                        
+                        // 更新模式狀態
+                        if (motionLevel > 50) {
+                            modeStatus.textContent = '手勢模式';
+                            updateStatus('手勢偵測中');
+                        } else {
+                            modeStatus.textContent = '觸控模式';
+                        }
+                    }
+                    
+                    lastFrame = currentFrame;
+                    
+                    // 繼續偵測
+                    requestAnimationFrame(detectMotion);
+                    
+                } catch (error) {
+                    console.error('偵測錯誤:', error);
+                }
+            }
             
-            drawingCtx.lineTo(point.x, point.y);
+            // 開始偵測
+            detectMotion();
+        }
+        
+        // 觸控繪製功能
+        function startTouchDrawing(e) {
+            e.preventDefault();
+            isDrawing = true;
+            
+            const touch = e.touches[0];
+            const rect = drawingCanvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            drawingCtx.beginPath();
+            drawingCtx.moveTo(x, y);
+            updateStatus('書寫中...');
+        }
+        
+        function continueTouchDrawing(e) {
+            e.preventDefault();
+            if (!isDrawing) return;
+            
+            const touch = e.touches[0];
+            const rect = drawingCanvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            drawingCtx.lineTo(x, y);
             drawingCtx.stroke();
-            lastDrawingPoint = point;
         }
         
-        function endDrawingStroke() {
+        function endTouchDrawing(e) {
+            e.preventDefault();
+            isDrawing = false;
             drawingCtx.closePath();
-            lastDrawingPoint = null;
+            updateStatus('完成書寫');
         }
         
+        // 滑鼠繪製功能（電腦測試用）
+        function startMouseDrawing(e) {
+            isDrawing = true;
+            
+            const rect = drawingCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            drawingCtx.beginPath();
+            drawingCtx.moveTo(x, y);
+            updateStatus('書寫中...');
+        }
+        
+        function continueMouseDrawing(e) {
+            if (!isDrawing) return;
+            
+            const rect = drawingCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            drawingCtx.lineTo(x, y);
+            drawingCtx.stroke();
+        }
+        
+        function endMouseDrawing() {
+            isDrawing = false;
+            drawingCtx.closePath();
+            updateStatus('完成書寫');
+        }
+        
+        // 清除畫布
         function clearDrawing() {
             drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-            updateDrawingStatus('已清除');
+            updateStatus('畫布已清除');
             currentScore = 0;
         }
         
-        // ========== 評分與切換 ==========
+        // 評分與切換
         function evaluateAndNext() {
-            if (isDrawing) {
-                alert('請先停止書寫（分開手指）再評分');
-                return;
+            // 簡單評分（檢查繪製面積）
+            const imageData = drawingCtx.getImageData(0, 0, drawingCanvas.width, drawingCanvas.height);
+            const data = imageData.data;
+            
+            let drawnPixels = 0;
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] > 10) { // 有繪製的像素
+                    drawnPixels++;
+                }
             }
             
-            // 計算分數
-            currentScore = calculateScore();
+            const totalPixels = drawingCanvas.width * drawingCanvas.height;
+            const coverage = (drawnPixels / totalPixels) * 100;
             
-            // 顯示評分彈窗
-            showScore(currentScore);
+            // 計算分數（0-100）
+            currentScore = Math.min(100, Math.round(coverage * 2));
+            
+            // 顯示分數
+            alert(`評分結果：${currentScore}分\n\n繪製覆蓋率：${coverage.toFixed(1)}%`);
             
             // 切換到下一個字母
             currentWordIndex = (currentWordIndex + 1) % words.length;
-            setTimeout(() => {
-                updateTargetWord();
-                clearDrawing();
-                updateDrawingStatus('準備書寫');
-            }, 1500);
+            targetWord.textContent = words[currentWordIndex];
+            document.getElementById('currentLetter').textContent = words[currentWordIndex];
+            
+            // 清除畫布
+            setTimeout(clearDrawing, 500);
         }
         
-        function calculateScore() {
-            try {
-                // 簡單的評分邏輯
-                const imageData = drawingCtx.getImageData(0, 0, drawingCanvas.width, drawingCanvas.height);
-                const data = imageData.data;
-                
-                // 計算繪製的像素數量
-                let drawnPixels = 0;
-                for (let i = 0; i < data.length; i += 4) {
-                    if (data[i + 3] > 10) {
-                        drawnPixels++;
-                    }
-                }
-                
-                if (drawnPixels < 10) {
-                    return 0;
-                }
-                
-                // 基礎分數計算
-                const maxPixels = drawingCanvas.width * drawingCanvas.height * 0.02;
-                let score = Math.min(40 + (drawnPixels / maxPixels * 60), 95);
-                
-                // 加入隨機變化
-                score += (Math.random() * 20 - 10);
-                score = Math.max(0, Math.min(100, Math.round(score)));
-                
-                console.log('評分:', score, '像素:', drawnPixels);
-                return score;
-            } catch (error) {
-                console.error('評分錯誤:', error);
-                return Math.floor(Math.random() * 41) + 60;
+        // 更新狀態
+        function updateStatus(status) {
+            drawingStatus.textContent = status;
+        }
+        
+        // 初始化系統
+        window.addEventListener('load', init);
+        
+        // 防止滾動
+        document.addEventListener('touchmove', function(e) {
+            if (e.target === drawingCanvas) {
+                e.preventDefault();
             }
-        }
-        
-        function showScore(score) {
-            scoreValue.textContent = score;
-            
-            // 根據分數顯示評語
-            let comment = '';
-            let color = '#4CAF50';
-            
-            if (score >= 90) {
-                comment = '🎉 太完美了！';
-                color = '#4CAF50';
-            } else if (score >= 80) {
-                comment = '👍 做得很好！';
-                color = '#8BC34A';
-            } else if (score >= 70) {
-                comment = '👌 不錯，繼續加油！';
-                color = '#FFC107';
-            } else if (score >= 60) {
-                comment = '💪 還可以，多加練習！';
-                color = '#FF9800';
-            } else if (score >= 30) {
-                comment = '🤔 再試一次！';
-                color = '#F44336';
-            } else {
-                comment = '🔄 幾乎沒有畫出東西';
-                color = '#9E9E9E';
-            }
-            
-            scoreComment.textContent = comment;
-            scoreValue.style.color = color;
-            scoreDisplay.classList.add('active');
-        }
-        
-        function closeScore() {
-            scoreDisplay.classList.remove('active');
-        }
-        
-        // ========== 輔助函數 ==========
-        function updateDrawingStatus(status) {
-            drawingStatusElement.textContent = status;
-        }
-        
-        function updateTargetWord() {
-            targetWordElement.textContent = words[currentWordIndex];
-            const currentLetter = document.getElementById('currentLetter');
-            if (currentLetter) {
-                currentLetter.textContent = words[currentWordIndex];
-            }
-        }
-        
-        // ========== 頁面載入 ==========
-        window.addEventListener('load', () => {
-            console.log('頁面載入完成');
-            init();
-            
-            // 5秒後自動隱藏加載畫面
-            setTimeout(() => {
-                if (loader.style.display !== 'none') {
-                    loader.style.display = 'none';
-                    console.log('自動隱藏加載畫面');
-                }
-            }, 5000);
-        });
-        
-        // 錯誤處理
-        window.addEventListener('error', (e) => {
-            console.error('全域錯誤:', e.error);
-            updateDrawingStatus('錯誤，請重新整理');
-        });
+        }, { passive: false });
     </script>
 </body>
 </html>
