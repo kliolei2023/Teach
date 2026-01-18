@@ -3,149 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 空中寫字教學系統 - 30人班級流暢版</title>
+    <title>🌟 AI 空中寫字小精靈 🌟</title>
     <style>
-        body { margin: 0; padding: 0; background: #121212; color: white; font-family: "Microsoft JhengHei", Arial, sans-serif; overflow: hidden; }
+        :root {
+            --primary-bg: #e0f7fa;
+            --teacher-color: #ff9800;
+            --student-color: #4caf50;
+            --accent-color: #00bcd4;
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        body { 
+            margin: 0; padding: 0; background: var(--primary-bg); 
+            color: #333; font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; 
+            overflow: hidden; 
+        }
+
+        body::before {
+            content: ""; position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.5) 0%, transparent 20%),
+                        radial-gradient(circle at 90% 80%, rgba(255,255,255,0.5) 0%, transparent 20%);
+            z-index: -1;
+        }
+
         .page { display: none; width: 100vw; height: 100vh; position: absolute; flex-direction: column; align-items: center; justify-content: center; }
         .active { display: flex; }
-        .card { background: rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 20px; backdrop-filter: blur(10px); width: 350px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: none; background: #00FF00; color: black; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        button:hover { transform: scale(1.02); }
-        button:disabled { background: #555; cursor: not-allowed; transform: none; }
-        #page_teacher_dash { overflow-y: auto; justify-content: flex-start; padding: 20px 0; }
+
+        .card { 
+            background: var(--card-bg); padding: 35px; border-radius: 40px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 350px; text-align: center;
+            border: 5px solid white;
+        }
+
+        h1 { color: #0288d1; font-size: 28px; text-shadow: 1px 1px 2px white; margin-bottom: 25px; }
+        h2, h3, h4 { margin: 10px 0; color: #555; }
+
+        input { 
+            width: 100%; padding: 15px; margin: 10px 0; border-radius: 20px; 
+            border: 2px solid #ddd; font-size: 18px; box-sizing: border-box; outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus { border-color: var(--accent-color); }
+
+        button { 
+            width: 100%; padding: 15px; margin-top: 15px; border-radius: 50px; 
+            border: none; background: #fff; color: #444; font-weight: bold; 
+            cursor: pointer; font-size: 20px; transition: 0.3s;
+            box-shadow: 0 6px 0 #ddd; position: relative; top: 0;
+        }
+        button:active { top: 4px; box-shadow: 0 2px 0 #ddd; }
+        button:hover { background: #f0f0f0; }
+
+        .btn-teacher { background: #ffb74d; color: white; box-shadow: 0 6px 0 #e65100; }
+        .btn-student { background: #81c784; color: white; box-shadow: 0 6px 0 #2e7d32; }
+        .btn-action { background: #4fc3f7; color: white; box-shadow: 0 6px 0 #0277bd; }
+        .btn-delete { background: #ff8a65; color: white; box-shadow: 0 6px 0 #bf360c; font-size: 14px; padding: 8px; }
+
+        #page_teacher_dash { overflow-y: auto; justify-content: flex-start; padding: 20px 0; background: #f1f8e9; }
         .dash-container { width: 95%; max-width: 1000px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
-        .monitor-panel { background: rgba(255, 255, 255, 0.08); padding: 18px; border-radius: 15px; flex: 1; min-width: 320px; border: 1px solid rgba(255,255,255,0.1); }
-        .room-manager { width: 95%; max-width: 1000px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .room-chip { background: #333; padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 8px; border: 1px solid #555; cursor: pointer; font-size: 14px; }
-        .room-chip.active { border-color: #00FF00; background: rgba(0,255,0,0.1); color: #00FF00; }
-        .room-chip .del-x { color: #ff4d4d; font-weight: bold; cursor: pointer; padding: 2px 5px; }
+        .monitor-panel { background: white; padding: 20px; border-radius: 30px; flex: 1; min-width: 320px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+
+        .room-manager { width: 95%; max-width: 1000px; background: white; padding: 15px; border-radius: 25px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .room-chip { background: #e1f5fe; padding: 8px 18px; border-radius: 30px; display: flex; align-items: center; gap: 8px; border: 2px solid #b3e5fc; cursor: pointer; color: #0277bd; font-weight: bold; }
+        .room-chip.active { border-color: #4caf50; background: #e8f5e9; color: #2e7d32; }
+        .room-chip .del-x { color: #ff5252; margin-left: 5px; }
+
         #page_writing { background: #000; }
-        #input_video { visibility: hidden; position: absolute; }
         #overlay_canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        .writing-ui { position: absolute; top: 20px; left: 20px; pointer-events: none; }
-        .writing-info { background: rgba(0,0,0,0.8); padding: 15px; border-radius: 12px; border: 2px solid #00FF00; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; background: rgba(0,0,0,0.4); }
-        th, td { border: 1px solid rgba(255,255,255,0.1); padding: 10px; text-align: center; }
-        th { background: #222; color: #00FF00; }
-        .work-thumb { width: 40px; height: 30px; border: 1px solid #00FF00; cursor: pointer; object-fit: cover; background: #000; border-radius: 4px; transform: scaleX(-1); }
-        #artwork_modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
-        #big_art { max-width: 90%; max-height: 80%; border: 2px solid white; border-radius: 10px; transform: scaleX(-1); }
-        #artwork_modal .close-art { position: absolute; top: 30px; right: 40px; color: white; font-size: 40px; cursor: pointer; font-weight: bold; }
-        #result_modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 30px; text-align: center; z-index: 2000; min-width: 320px; color: black; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
-        #res_score { font-size: 80px; font-weight: bold; color: #2c3e50; }
+        .writing-ui { position: absolute; top: 25px; left: 25px; pointer-events: none; }
+        .writing-info { 
+            background: rgba(255,255,255,0.9); padding: 20px; border-radius: 30px; 
+            border: 4px solid #81c784; color: #333; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px; }
+        th { padding: 12px; color: #0288d1; border-bottom: 2px solid #e1f5fe; }
+        td { padding: 12px; background: #fafafa; border: none; }
+        td:first-child { border-radius: 15px 0 0 15px; }
+        td:last-child { border-radius: 0 15px 15px 0; }
+        
+        .work-thumb { width: 50px; height: 38px; border: 2px solid #81c784; cursor: pointer; object-fit: cover; background: #000; border-radius: 8px; transform: scaleX(-1); }
+
+        #artwork_modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        #big_art { max-width: 85%; max-height: 80%; border: 8px solid white; border-radius: 20px; transform: scaleX(-1); }
+        
+        /* 一般單字評分視窗 */
+        #result_modal { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 45px; border-radius: 50px; text-align: center; z-index: 2000; min-width: 320px; 
+            border: 8px solid #ffeb3b; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        #res_score { font-size: 100px; font-weight: bold; color: #ff9800; margin: 10px 0; font-family: 'Comic Sans MS', sans-serif; }
+        #res_stars { font-size: 45px; margin-bottom: 20px; }
+
+        /* 最後的大總結視窗 */
+        #final_modal {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 50px; border-radius: 60px; text-align: center; z-index: 2500; min-width: 350px;
+            border: 10px solid #4caf50; box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+        }
     </style>
 </head>
 <body>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, query, where, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDk5l70PQPSb0pIl6q-eyXU1IBF093F9FQ",
-            authDomain: "writing-3646d.firebaseapp.com",
-            databaseURL: "https://writing-3646d-default-rtdb.firebaseio.com",
-            projectId: "writing-3646d",
-            storageBucket: "writing-3646d.firebasestorage.app",
-            messagingSenderId: "268020200454",
-            appId: "1:268020200454:web:d0b12c77a91efeecf33f87",
-            measurementId: "G-HSSVJEQC95"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        window.firebaseDB = { db, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, query, where, deleteDoc, getDocs };
-
-        async function loginAsTeacher() {
-            const accountInput = document.getElementById('teacherAccount').value;
-            const passwordInput = document.getElementById('teacherPassword').value;
-            if (!accountInput || !passwordInput) { alert("請輸入帳號和密碼"); return; }
-            try {
-                const docRef = doc(db, "admins", accountInput);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const adminData = docSnap.data();
-                    if (adminData.password === passwordInput) {
-                        alert("登入成功！");
-                        showPage('page_teacher_dash');
-                    } else { alert("密碼錯誤！"); }
-                } else { alert("找不到帳號！"); }
-            } catch (e) { alert("系統錯誤"); }
-        }
-        window.loginAsTeacher = loginAsTeacher;
-    </script>
-
-    <div id="artwork_modal" onclick="closeArt()"><span class="close-art">&times;</span><img id="big_art" src=""><div id="art_info" style="position: absolute; bottom: 50px; color: white; font-size: 20px;"></div></div>
+    <div id="artwork_modal" onclick="closeArt()"><span style="position:absolute; top:20px; right:30px; color:white; font-size:50px; cursor:pointer;">&times;</span><img id="big_art" src=""><div id="art_info" style="position: absolute; bottom: 40px; color: white; font-size: 24px; font-weight:bold;"></div></div>
 
     <div id="page_entry" class="page active">
-        <h1>空中寫字教學系統</h1>
+        <div style="font-size: 80px; margin-bottom: 10px;">✨</div>
+        <h1>空中寫字小精靈</h1>
         <div class="card">
-            <button onclick="showPage('page_teacher_login')">老師管理端</button>
-            <button onclick="showPage('page_student_info')" style="background: white;">學生練習端</button>
+            <button class="btn-teacher" onclick="showPage('page_teacher_login')">老師管理端 👩‍🏫</button>
+            <button class="btn-student" onclick="showPage('page_student_info')">學生練習端 👦</button>
         </div>
     </div>
 
     <div id="page_teacher_login" class="page">
         <div class="card">
-            <h2>老師登入</h2>
-            <input type="text" id="teacherAccount" placeholder="帳號">
-            <input type="password" id="teacherPassword" placeholder="密碼">
-            <button onclick="loginAsTeacher()">登入</button>
-            <button onclick="showPage('page_entry')" style="background:none; color:#aaa;">返回</button>
+            <h2>🔑 老師登入</h2>
+            <input type="text" id="teacherAccount" placeholder="輸入帳號">
+            <input type="password" id="teacherPassword" placeholder="輸入密碼">
+            <button class="btn-teacher" onclick="loginAsTeacher()">開始上課</button>
+            <button onclick="showPage('page_entry')" style="background:none; color:#999; font-size:14px; box-shadow:none;">返回首頁</button>
         </div>
     </div>
 
     <div id="page_teacher_dash" class="page">
         <div class="room-manager">
-            <span style="font-size:14px; color:#aaa;">房號管理:</span>
-            <div id="room_chips_container" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
-            <div style="display:flex; gap:5px; margin-left:auto;">
-                <input type="text" id="class_room_id" placeholder="新房號" style="margin:0; padding:5px; width:80px; font-size:12px;">
-                <button onclick="saveRoomID()" style="margin:0; padding:5px 10px; width:auto; font-size:12px;">新增</button>
+            <span style="font-weight:bold; color:#0288d1;">課堂房號：</span>
+            <div id="room_chips_container" style="display:flex; gap:8px;"></div>
+            <div style="display:flex; gap:8px; margin-left:auto;">
+                <input type="text" id="class_room_id" placeholder="新房號" style="margin:0; padding:8px; width:100px; border-radius:15px;">
+                <button class="btn-action" onclick="saveRoomID()" style="margin:0; padding:8px 15px; width:auto; font-size:14px;">+ 新增</button>
             </div>
         </div>
+
         <div class="dash-container">
             <div class="monitor-panel">
-                <h4>單字管理</h4>
-                <div style="display:flex; gap:10px;"><input type="text" id="new_word" placeholder="新單字" style="margin:0;"><button onclick="addNewWord()" style="width:80px; margin:0;">加入</button></div>
-                <div id="word_list" style="height:150px; overflow-y:auto; background:rgba(0,0,0,0.4); margin-top:10px; border-radius:10px; text-align:left; padding:10px;"></div>
-                <div style="display:flex; gap:10px; margin-top:10px;"><button onclick="publishSelectedWords()" style="background:#00FF00;">發佈勾選</button><button onclick="deleteSelectedWords()" style="background:#ff4d4d; color:white;">選擇剷除</button></div>
-                <div style="font-size:12px; color:#00FF00; margin-top:8px;">當前發佈: <span id="published_display" style="color:#fff;">同步中...</span></div>
+                <h4>📝 出題板</h4>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="new_word" placeholder="新單字" style="margin:0;">
+                    <button class="btn-student" onclick="addNewWord()" style="width:80px; margin:0; font-size:14px;">加入</button>
+                </div>
+                <div id="word_list" style="height:150px; overflow-y:auto; margin:15px 0; text-align:left; padding:10px; border:2px dashed #ddd; border-radius:15px;"></div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-action" onclick="publishSelectedWords()">📢 發佈練習</button>
+                    <button class="btn-delete" onclick="deleteSelectedWords()">🗑️ 刪除</button>
+                </div>
+                <div style="font-size:13px; color:#4caf50; margin-top:10px; font-weight:bold;">✨ 目前發佈：<span id="published_display" style="color:#666;">無</span></div>
             </div>
+
             <div class="monitor-panel" style="flex: 2;">
-                <h3>成績榜 (房號: <span id="room_display" style="color:#00FF00;">--</span>)</h3>
-                <div style="max-height: 450px; overflow-y: auto;"><table id="leaderboard"><thead><tr><th>作品</th><th>班級姓名</th><th>平均分</th><th>明細</th><th>進度</th></tr></thead><tbody></tbody></table></div>
-                <button onclick="clearScores()" style="background:#666; font-size:12px; margin-top:15px; width:auto; padding:5px 15px;">清空房內成績</button>
+                <h4>🏆 龍虎榜 (房號: <span id="room_display" style="color:#f57c00;">--</span>)</h4>
+                <div style="max-height: 450px; overflow-y: auto;">
+                    <table id="leaderboard">
+                        <thead><tr><th>作品</th><th>學生姓名</th><th>平均分</th><th>明細</th><th>進度</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button onclick="clearScores()" style="background:#eee; font-size:12px; margin-top:15px; width:auto; padding:5px 15px; box-shadow:none; color:#999;">清空紀錄</button>
             </div>
         </div>
-        <button onclick="showPage('page_entry')" style="background:none; color:#aaa; margin-top:20px; cursor:pointer;">登出</button>
+        <button onclick="showPage('page_entry')" style="background:none; color:#999; margin-top:20px; box-shadow:none; font-size:14px;">安全退出 🚪</button>
     </div>
 
     <div id="page_student_info" class="page">
         <div class="card">
-            <h2>學生登記</h2>
-            <input type="text" id="s_class" placeholder="班級">
-            <input type="text" id="s_name" placeholder="姓名">
-            <input type="text" id="s_room_input" placeholder="房號">
-            <button onclick="handleStudentEntry()">進入練習</button>
-            <button onclick="showPage('page_entry')" style="background:none; color:#aaa;">返回</button>
+            <h2>📝 準備好寫字了嗎？</h2>
+            <input type="text" id="s_class" placeholder="你的班級 (例: 1A)">
+            <input type="text" id="s_name" placeholder="你的姓名">
+            <input type="text" id="s_room_input" placeholder="請輸入老師給的房號">
+            <button class="btn-student" onclick="handleStudentEntry()">進入挑戰 🚀</button>
+            <button onclick="showPage('page_entry')" style="background:none; color:#999; font-size:14px; box-shadow:none;">回首頁</button>
         </div>
     </div>
 
     <div id="page_writing" class="page" style="padding:0;">
-        <video id="input_video"></video><canvas id="overlay_canvas"></canvas>
-        <div class="writing-ui"><div class="writing-info"><div style="font-size:36px; font-weight:bold; color:#00FF00;" id="target_word">READY</div><div id="progress_info" style="font-size:16px; color:#aaa; margin-top:5px;">進度: 0 / 0</div></div></div>
-        <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); display:flex; gap:20px;">
-            <button onclick="clearCanvas()" style="width:100px; background:white;">重寫</button>
-            <button onclick="calculateFinalScore()" id="btn_submit_score" style="width:150px; background:#00FF00;">提交評分</button>
+        <video id="input_video" style="visibility:hidden; position:absolute;"></video>
+        <canvas id="overlay_canvas"></canvas>
+        <div class="writing-ui">
+            <div class="writing-info">
+                <div style="font-size:42px; font-weight:bold; color:#2e7d32;" id="target_word">READY</div>
+                <div id="progress_info" style="font-size:18px; color:#666; margin-top:5px; font-weight:bold;">第 0 / 0 個</div>
+            </div>
+        </div>
+        <div style="position:absolute; bottom:35px; left:50%; transform:translateX(-50%); display:flex; gap:25px;">
+            <button onclick="clearCanvas()" style="width:110px; background:white; color:#333; box-shadow:0 6px 0 #ccc;">♻️ 重寫</button>
+            <button onclick="calculateFinalScore()" id="btn_submit_score" style="width:180px; background:#ff9800; color:white; box-shadow:0 6px 0 #e65100;">✅ 完成提交</button>
         </div>
     </div>
 
-    <div id="result_modal"><div style="font-size: 20px;">本字得分</div><div id="res_score">0</div><div id="res_stars" style="font-size:32px; color:#f1c40f;">⭐⭐⭐</div><button onclick="toNextStep()" style="background:#27ae60; color:white; margin-top:20px; width:100%;">下一個</button></div>
+    <div id="result_modal">
+        <div style="font-size: 28px; color: #0288d1; font-weight:bold;">太厲害了！🎉</div>
+        <div id="res_score">0</div>
+        <div id="res_stars">⭐⭐⭐</div>
+        <button class="btn-action" onclick="toNextStep()">繼續下一個 ➡️</button>
+    </div>
+
+    <div id="final_modal">
+        <div style="font-size: 80px; margin-bottom: 10px;">🏆</div>
+        <div style="font-size: 32px; color: #2e7d32; font-weight:bold; margin-bottom: 10px;">挑戰大成功！</div>
+        <div style="font-size: 18px; color: #666; margin-bottom: 30px;">你已經寫完所有的單字了，<br>要不要再練習一次呢？</div>
+        <button class="btn-student" onclick="restartChallenge()">再來一次 🔄</button>
+        <button class="btn-action" style="background:#0288d1; box-shadow:0 6px 0 #01579b;" onclick="exitChallenge()">退出休息 🏠</button>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, query, where, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDk5l70PQPSb0pIl6q-eyXU1IBF093F9FQ",
+        authDomain: "writing-3646d.firebaseapp.com",
+        databaseURL: "https://writing-3646d-default-rtdb.firebaseio.com",
+        projectId: "writing-3646d",
+        storageBucket: "writing-3646d.firebasestorage.app",
+        messagingSenderId: "268020200454",
+        appId: "1:268020200454:web:d0b12c77a91efeecf33f87",
+        measurementId: "G-HSSVJEQC95"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    window.firebaseDB = { db, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, query, where, deleteDoc, getDocs };
+
+    async function loginAsTeacher() {
+        const accountInput = document.getElementById('teacherAccount').value;
+        const passwordInput = document.getElementById('teacherPassword').value;
+        if (!accountInput || !passwordInput) { alert("請輸入帳號和密碼哦！"); return; }
+        try {
+            const docRef = doc(db, "admins", accountInput);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists() && docSnap.data().password === passwordInput) {
+                showPage('page_teacher_dash');
+            } else { alert("帳號或密碼不對喔！"); }
+        } catch (e) { alert("系統出錯了，請稍後再試"); }
+    }
+    window.loginAsTeacher = loginAsTeacher;
+</script>
 
 <script>
     let cloudData = { roomID: "", roomList: [], wordBank: [], publishedWords: [] };
@@ -168,22 +265,17 @@
         let id = input.value.trim();
         if (!id) return;
         await syncConfigFromCloud();
-        if (!cloudData.roomList.includes(id)) { cloudData.roomList.push(id); }
+        if (!cloudData.roomList.includes(id)) cloudData.roomList.push(id);
         cloudData.roomID = id;
         await updateCloudConfig({ roomList: cloudData.roomList, roomID: id });
-        input.value = "";
-        renderTeacherDash();
+        input.value = ""; renderTeacherDash();
     }
 
-    async function selectRoom(id) {
-        cloudData.roomID = id;
-        await updateCloudConfig({ roomID: id });
-        renderTeacherDash();
-    }
+    async function selectRoom(id) { cloudData.roomID = id; await updateCloudConfig({ roomID: id }); renderTeacherDash(); }
 
     async function deleteRoom(id, event) {
         event.stopPropagation();
-        if(confirm(`刪除房號 ${id}？`)) {
+        if(confirm(`真的要刪除房間 ${id} 嗎？`)) {
             await syncConfigFromCloud();
             cloudData.roomList = cloudData.roomList.filter(r => r !== id);
             if(cloudData.roomID === id) cloudData.roomID = "";
@@ -198,25 +290,23 @@
     async function addNewWord() {
         let w = document.getElementById('new_word').value.toUpperCase().trim();
         if(w && !cloudData.wordBank.includes(w)) {
-            cloudData.wordBank.push(w);
-            await updateCloudConfig({ wordBank: cloudData.wordBank });
-            renderWordListOnly();
-            document.getElementById('new_word').value = "";
+            cloudData.wordBank.push(w); await updateCloudConfig({ wordBank: cloudData.wordBank });
+            renderWordListOnly(); document.getElementById('new_word').value = "";
         }
     }
 
     async function publishSelectedWords() {
         const cbs = document.querySelectorAll('.word-checkbox:checked');
         cloudData.publishedWords = Array.from(cbs).map(c => c.value);
+        if(cloudData.publishedWords.length === 0) return alert("要先勾選題目喔！");
         await updateCloudConfig({ publishedWords: cloudData.publishedWords });
-        renderTeacherDash();
-        alert("已發佈至學生端");
+        renderTeacherDash(); alert("發佈成功！快叫學生開始吧！");
     }
 
     async function deleteSelectedWords() {
         const cbs = document.querySelectorAll('.word-checkbox:checked');
         const toDel = Array.from(cbs).map(c => c.value);
-        if(confirm("確定剷除？")) {
+        if(confirm("確定刪除這些題目？")) {
             cloudData.wordBank = cloudData.wordBank.filter(w => !toDel.includes(w));
             cloudData.publishedWords = cloudData.publishedWords.filter(w => !toDel.includes(w));
             await updateCloudConfig({ wordBank: cloudData.wordBank, publishedWords: cloudData.publishedWords });
@@ -228,20 +318,21 @@
         const list = document.getElementById('word_list');
         list.innerHTML = "";
         cloudData.wordBank.forEach(w => {
-            list.innerHTML += `<div><input type="checkbox" class="word-checkbox" value="${w}"> ${w}</div>`;
+            list.innerHTML += `<div style="margin-bottom:8px;"><label style="cursor:pointer; display:flex; align-items:center; gap:8px;"><input type="checkbox" class="word-checkbox" value="${w}" style="width:20px;height:20px;"> ${w}</label></div>`;
         });
     }
 
     function renderTeacherDash() {
         document.getElementById('room_display').innerText = cloudData.roomID || "--";
-        document.getElementById('published_display').innerText = cloudData.publishedWords.join(', ') || "無";
+        document.getElementById('published_display').innerText = cloudData.publishedWords.join(', ') || "尚未出題";
         const chips = document.getElementById('room_chips_container');
         chips.innerHTML = "";
         cloudData.roomList.forEach(id => {
             const active = (id === cloudData.roomID) ? "active" : "";
             chips.innerHTML += `<div class="room-chip ${active}" onclick="selectRoom('${id}')">🏠 ${id}<span class="del-x" onclick="deleteRoom('${id}', event)">×</span></div>`;
         });
-        renderWordListOnly();
+        if(!document.querySelector('.word-checkbox')) renderWordListOnly();
+        
         const { db, collection, query, where, onSnapshot } = window.firebaseDB;
         if(unsubResults) unsubResults();
         const q = query(collection(db, "results"), where("room", "==", cloudData.roomID));
@@ -252,31 +343,33 @@
             snapshot.forEach(doc => data.push(doc.data()));
             data.sort((a,b) => b.avg - a.avg).forEach(r => {
                 let detail = Object.entries(r.details).map(([w, s]) => `${w}: ${s}`).join(' | ');
-                let thumbHtml = r.bestImg ? `<img src="${r.bestImg}" class="work-thumb" onclick="openArt('${r.bestImg}', '${r.name}')">` : "-";
-                tbody.innerHTML += `<tr><td>${thumbHtml}</td><td><b>[${r.class}] ${r.name}</b></td><td style="color:#00FF00; font-size:16px;">${r.avg}</td><td style="text-align:left; font-size:11px; color:#bbb;">${detail}</td><td>${r.finished}/${r.total}</td></tr>`;
+                let thumbHtml = r.bestImg ? `<img src="${r.bestImg}" class="work-thumb" onclick="openArt('${r.bestImg}', '${r.name}')">` : "☁️";
+                tbody.innerHTML += `<tr><td>${thumbHtml}</td><td><b>[${r.class}] ${r.name}</b></td><td style="color:#4caf50; font-size:18px; font-weight:bold;">${r.avg}</td><td style="font-size:11px; color:#888;">${detail}</td><td>${r.finished}/${r.total}</td></tr>`;
             });
         });
     }
 
-    function openArt(src, name) { document.getElementById('big_art').src = src; document.getElementById('art_info').innerText = "學生: " + name; document.getElementById('artwork_modal').style.display = "flex"; }
+    function openArt(src, name) { document.getElementById('big_art').src = src; document.getElementById('art_info').innerText = "小畫家: " + name; document.getElementById('artwork_modal').style.display = "flex"; }
     function closeArt() { document.getElementById('artwork_modal').style.display = "none"; }
 
+    // --- 學生端邏輯 ---
     let studentState = { room:"", class:"", name:"", queue:[], currentIdx: 0, scores:{}, bestScore: 0, bestImg: "" };
+
     async function handleStudentEntry() {
         await syncConfigFromCloud();
         let room = document.getElementById('s_room_input').value.trim();
-        if(!cloudData.roomList.includes(room)) { alert("房號不存在！"); return; }
-        if(cloudData.publishedWords.length === 0) { alert("內容未發佈！"); return; }
+        if(!cloudData.roomList.includes(room)) { alert("房號不對喔，再問問老師！"); return; }
+        if(cloudData.publishedWords.length === 0) { alert("老師還沒出題耶！"); return; }
         studentState = { room, class: document.getElementById('s_class').value, name: document.getElementById('s_name').value, queue: [...cloudData.publishedWords], currentIdx: 0, scores: {}, bestScore: 0, bestImg: "" };
         showPage('page_writing');
     }
 
     function updateWritingUI() {
         const w = studentState.queue[studentState.currentIdx];
-        document.getElementById('target_word').innerText = w || "END";
-        document.getElementById('progress_info').innerText = `進度: ${studentState.currentIdx + 1} / ${studentState.queue.length}`;
+        document.getElementById('target_word').innerText = w || "結束了！";
+        document.getElementById('progress_info').innerText = `第 ${studentState.currentIdx + 1} / ${studentState.queue.length} 個`;
         document.getElementById('btn_submit_score').disabled = false;
-        document.getElementById('btn_submit_score').innerText = "提交評分";
+        document.getElementById('btn_submit_score').innerText = "✅ 完成提交";
     }
 
     const video = document.getElementById('input_video'), canvas = document.getElementById('overlay_canvas'), ctx = canvas.getContext('2d');
@@ -288,7 +381,7 @@
         const w = studentState.queue[studentState.currentIdx];
         if(w) {
             let fs = Math.min(250, (canvas.width / w.length) * 1.2);
-            ctx.save(); ctx.translate(canvas.width/2, canvas.height/2); ctx.scale(-1, 1); ctx.globalAlpha = 0.5; ctx.fillStyle = 'white';
+            ctx.save(); ctx.translate(canvas.width/2, canvas.height/2); ctx.scale(-1, 1); ctx.globalAlpha = 0.45; ctx.fillStyle = 'white';
             ctx.font = `bold ${fs}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
             ctx.fillText(w, 0, 0); ctx.restore();
         }
@@ -297,13 +390,12 @@
             const d = Math.sqrt(Math.pow(h[4].x-h[8].x,2)+Math.pow(h[4].y-h[8].y,2));
             const rx = h[8].x * canvas.width, ry = h[8].y * canvas.height;
             if (lastX === 0) { lastX = rx; lastY = ry; }
-            const sx = lastX + (rx - lastX) * 0.3, sy = lastY + (ry - lastY) * 0.3;
-            lastX = sx; lastY = sy;
+            const sx = lastX + (rx - lastX) * 0.3, sy = lastY + (ry - lastY) * 0.3; lastX = sx; lastY = sy;
             if (d < 0.035) currentStroke.push({ x: sx, y: sy });
             else if (currentStroke.length > 0) { allPaths.push([...currentStroke]); currentStroke = []; }
-            ctx.fillStyle = "red"; ctx.beginPath(); ctx.arc(sx, sy, 8, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "#ff5252"; ctx.beginPath(); ctx.arc(sx, sy, 10, 0, Math.PI*2); ctx.fill();
         }
-        ctx.strokeStyle = '#00FF00'; ctx.lineWidth = 15; ctx.lineCap = 'round';
+        ctx.strokeStyle = '#81c784'; ctx.lineWidth = 18; ctx.lineCap = 'round';
         [...allPaths, currentStroke].forEach(p => {
             if (p.length < 2) return;
             ctx.beginPath(); ctx.moveTo(p[0].x, p[0].y);
@@ -315,62 +407,61 @@
 
     async function calculateFinalScore() {
         const btn = document.getElementById('btn_submit_score');
-        btn.disabled = true;
-        btn.innerText = "評分中...";
+        btn.disabled = true; btn.innerText = "打分數中...";
 
         const w = studentState.queue[studentState.currentIdx];
         const off = document.createElement('canvas'); off.width = canvas.width; off.height = canvas.height;
         const octx = off.getContext('2d');
         let fs = Math.min(250, (off.width / w.length) * 1.2);
-        octx.save(); octx.translate(off.width/2, off.height/2); octx.scale(-1,1); octx.font = `bold ${fs}px Arial`; octx.textAlign="center"; octx.textBaseline="middle"; octx.lineWidth = 25; octx.strokeText(w, 0, 0); octx.fillText(w, 0, 0); octx.restore();
+        octx.save(); octx.translate(off.width/2, off.height/2); octx.scale(-1,1);
+        octx.font = `bold ${fs}px Arial`; octx.textAlign="center"; octx.textBaseline="middle"; octx.lineWidth = 25; octx.strokeText(w, 0, 0); octx.fillText(w, 0, 0); octx.restore();
         const tD = octx.getImageData(0,0,off.width,off.height).data;
-        octx.clearRect(0,0,off.width,off.height); octx.strokeStyle = '#00FF00'; octx.lineWidth = 15; octx.lineCap = 'round';
+        octx.clearRect(0,0,off.width,off.height); octx.strokeStyle = '#4caf50'; octx.lineWidth = 15; octx.lineCap = 'round';
         [...allPaths, currentStroke].forEach(p => {
             if (p.length < 2) return;
             octx.beginPath(); octx.moveTo(p[0].x, p[0].y);
             for(let i=1; i<p.length-1; i++) octx.quadraticCurveTo(p[i].x, p[i].y, (p[i].x+p[i+1].x)/2, (p[i].y+p[i+1].y)/2);
             octx.stroke();
         });
-
-        // 🔹 核心優化：將圖片改為 jpeg 格式，並設定品質為 0.15 (極低體積)
-        let img = off.toDataURL("image/jpeg", 0.15); 
-        
+        let img = off.toDataURL("image/jpeg", 0.15);
         const sD = octx.getImageData(0,0,off.width,off.height).data;
         let m=0, t=0; for (let i=3; i<tD.length; i+=16) { if(tD[i]>0){ t++; if(sD[i]>0) m++; } }
-        
-        // 🔹 回歸平衡評分邏輯
-        let coverage = (m/t)*100;
-        let finalScore = 0;
-        if (coverage > 65) { finalScore = 90 + (coverage - 65) / 3.5; }
-        else if (coverage > 35) { finalScore = 70 + (coverage - 35) * 0.6; }
-        else if (coverage > 10) { finalScore = 40 + (coverage * 2); }
-        else { finalScore = 20; }
-        
-        finalScore = Math.min(100, Math.round(finalScore));
-        studentState.scores[w] = finalScore;
-        if (finalScore >= studentState.bestScore) { studentState.bestScore = finalScore; studentState.bestImg = img; }
+        let cov = (m/t)*100;
+        let sc = cov > 65 ? (90+(cov-65)/3.5) : (cov > 35 ? (70+(cov-35)*0.6) : (40+cov*2));
+        sc = Math.min(100, Math.round(sc));
+        studentState.scores[w] = sc;
+        if (sc >= studentState.bestScore) { studentState.bestScore = sc; studentState.bestImg = img; }
 
         const { db, setDoc, doc } = window.firebaseDB;
         let fin = Object.keys(studentState.scores).length, tot = studentState.queue.length, av = Math.round(Object.values(studentState.scores).reduce((a,b)=>a+b,0) / fin);
         await setDoc(doc(db, "results", `${studentState.room}_${studentState.class}_${studentState.name}`), {
             room: studentState.room, class: studentState.class, name: studentState.name, details: studentState.scores, finished: fin, total: tot, avg: av, bestImg: studentState.bestImg
         });
-        
-        document.getElementById('res_score').innerText = finalScore;
-        document.getElementById('res_stars').innerText = "⭐".repeat(finalScore >= 90 ? 5 : (finalScore >= 75 ? 4 : 3));
+        document.getElementById('res_score').innerText = sc;
+        document.getElementById('res_stars').innerText = "⭐".repeat(sc >= 90 ? 5 : (sc >= 75 ? 4 : 3));
         document.getElementById('result_modal').style.display = "block";
     }
 
     function toNextStep() {
-        document.getElementById('result_modal').style.display = "none";
-        clearCanvas();
-        if(studentState.currentIdx < studentState.queue.length - 1) {
-            studentState.currentIdx++;
-            updateWritingUI();
-        } else {
-            alert("挑戰結束");
-            showPage('page_entry');
+        document.getElementById('result_modal').style.display = "none"; clearCanvas();
+        if(studentState.currentIdx < studentState.queue.length - 1) { 
+            studentState.currentIdx++; updateWritingUI(); 
+        } else { 
+            // 如果完成了所有單字，顯示最後的可愛總結視窗
+            document.getElementById('final_modal').style.display = "block";
         }
+    }
+
+    function restartChallenge() {
+        document.getElementById('final_modal').style.display = "none";
+        studentState.currentIdx = 0;
+        studentState.scores = {};
+        updateWritingUI();
+    }
+
+    function exitChallenge() {
+        document.getElementById('final_modal').style.display = "none";
+        showPage('page_entry');
     }
 
     async function showPage(id) {
@@ -378,8 +469,7 @@
         document.getElementById(id).classList.add('active');
         if(id === 'page_teacher_dash') { await syncConfigFromCloud(); renderTeacherDash(); }
         if(id === 'page_writing') {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            updateWritingUI();
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight; updateWritingUI();
             const hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
             hands.setOptions({ maxNumHands:1, modelComplexity:1, minDetectionConfidence:0.7, minTrackingConfidence:0.7 });
             hands.onResults(onResults);
@@ -387,7 +477,7 @@
         }
     }
     function clearCanvas() { allPaths = []; currentStroke = []; lastX = 0; lastY = 0; }
-    async function clearScores() { if(confirm("清空？")) { const { db, collection, query, where, getDocs, deleteDoc, doc } = window.firebaseDB; const snapshot = await getDocs(query(collection(db, "results"), where("room", "==", cloudData.roomID))); snapshot.forEach(async (d) => await deleteDoc(doc(db, "results", d.id))); } }
+    async function clearScores() { if(confirm("確定要清空大家的分數嗎？")) { const { db, collection, query, where, getDocs, deleteDoc, doc } = window.firebaseDB; const snapshot = await getDocs(query(collection(db, "results"), where("room", "==", cloudData.roomID))); snapshot.forEach(async (d) => await deleteDoc(doc(db, "results", d.id))); } }
 </script>
 </body>
 </html>
